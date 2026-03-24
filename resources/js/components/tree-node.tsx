@@ -21,22 +21,29 @@ export function TreeNode({ member, depth = 0, onNodeClick }: TreeNodeProps) {
 
     const nodeColor = depthColors[Math.min(depth, depthColors.length - 1)];
 
-    // Group children by spouse
+    // Group children by spouse safely
     const childrenGroups = [];
     if (hasChildren) {
+        const assignedChildIds = new Set();
+
         if (member.spouses && member.spouses.length > 0) {
             member.spouses.forEach(spouse => {
-                const spouseChildren = member.children_recursive!.filter(c => c.parent_spouse_id === spouse.id);
+                // Use loose equality == to prevent string vs number mismatch drops
+                const spouseChildren = member.children_recursive!.filter(c => c.parent_spouse_id == spouse.id);
                 if (spouseChildren.length > 0) {
                     childrenGroups.push({ label: spouse.name, children: spouseChildren });
+                    spouseChildren.forEach(c => assignedChildIds.add(c.id));
                 }
             });
         }
         
-        // Children without a specific spouse mapped (or default)
-        const unknownChildren = member.children_recursive!.filter(c => !c.parent_spouse_id);
-        if (unknownChildren.length > 0) {
-            childrenGroups.push({ label: 'Orang Tua Tunggal / Tidak Diketahui', children: unknownChildren });
+        // Catch-all for children that didn't match any spouse (or have null spouse)
+        const unassignedChildren = member.children_recursive!.filter(c => !assignedChildIds.has(c.id));
+        if (unassignedChildren.length > 0) {
+            childrenGroups.push({ 
+                label: (member.spouses && member.spouses.length > 0) ? 'Lainnya / Tidak Diketahui' : 'Anak', 
+                children: unassignedChildren 
+            });
         }
     }
 
