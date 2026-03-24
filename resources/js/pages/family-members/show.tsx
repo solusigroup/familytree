@@ -54,13 +54,24 @@ export default function FamilyMemberShow() {
                         <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
                             {/* Avatar */}
                             <div
-                                className={`flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl text-3xl font-bold text-white ${
-                                    member.gender === 'male'
+                                className={`flex h-24 w-24 shrink-0 overflow-hidden items-center justify-center rounded-2xl text-3xl font-bold text-white shadow-md ${
+                                    member.photo ? 'bg-muted/30' : (member.gender === 'male'
                                         ? 'bg-gradient-to-br from-sky-500 to-blue-600'
-                                        : 'bg-gradient-to-br from-pink-500 to-rose-600'
+                                        : 'bg-gradient-to-br from-pink-500 to-rose-600')
                                 }`}
                             >
-                                {member.name.charAt(0).toUpperCase()}
+                                {member.photo ? (
+                                    <img 
+                                        src={`/storage/${member.photo}`} 
+                                        alt={member.name} 
+                                        className="h-full w-full object-cover" 
+                                        onError={(e) => {
+                                            (e.target as HTMLImageElement).style.display = 'none';
+                                        }}
+                                    />
+                                ) : (
+                                    member.name.charAt(0).toUpperCase()
+                                )}
                             </div>
 
                             <div className="flex-1 space-y-4 text-center sm:text-left">

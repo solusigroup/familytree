@@ -98,7 +98,23 @@ export default function FamilyMemberIndex() {
                                             key={member.id}
                                             className="border-b border-sidebar-border/50 transition-colors hover:bg-muted/20"
                                         >
-                                            <td className="px-4 py-3 font-medium">{member.name}</td>
+                                            <td className="px-4 py-3 font-medium">
+                                                <div className="flex items-center gap-3">
+                                                    <div className={`flex h-8 w-8 shrink-0 overflow-hidden items-center justify-center rounded-full text-xs font-bold text-white ${member.photo ? 'bg-muted/30' : (member.gender === 'male' ? 'bg-sky-500' : 'bg-pink-500')}`}>
+                                                        {member.photo ? (
+                                                            <img 
+                                                                src={`/storage/${member.photo}`} 
+                                                                alt="" 
+                                                                className="h-full w-full object-cover" 
+                                                                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                                                            />
+                                                        ) : (
+                                                            member.name.charAt(0)
+                                                        )}
+                                                    </div>
+                                                    <span>{member.name}</span>
+                                                </div>
+                                            </td>
                                             <td className="px-4 py-3">
                                                 <span
                                                     className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${

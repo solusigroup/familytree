@@ -48,13 +48,28 @@ export function TreeNode({ member, depth = 0, onNodeClick }: TreeNodeProps) {
                 className={`relative cursor-pointer rounded-2xl border px-5 py-3 text-center transition-all duration-300 hover:scale-105 ${nodeColor} ${isDeceased ? 'opacity-70' : ''}`}
             >
                 <div
-                    className={`mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-white ${
-                        member.gender === 'male'
+                    className={`mx-auto mb-2 flex h-10 w-10 overflow-hidden items-center justify-center rounded-full text-sm font-bold text-white ${
+                        member.photo ? 'bg-transparent ring-2 ring-white/20' : (member.gender === 'male'
                             ? 'bg-gradient-to-br from-sky-500 to-blue-600'
-                            : 'bg-gradient-to-br from-pink-500 to-rose-600'
+                            : 'bg-gradient-to-br from-pink-500 to-rose-600')
                     }`}
                 >
-                    {member.name.charAt(0)}
+                    {member.photo ? (
+                        <img 
+                            src={`/storage/${member.photo}`} 
+                            alt={member.name} 
+                            className="h-full w-full object-cover"
+                            onError={(e) => {
+                                (e.target as HTMLImageElement).style.display = 'none';
+                                if (e.currentTarget.parentElement) {
+                                    e.currentTarget.parentElement.innerText = member.name.charAt(0);
+                                    e.currentTarget.parentElement.className = `mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-white ${member.gender === 'male' ? 'bg-gradient-to-br from-sky-500 to-blue-600' : 'bg-gradient-to-br from-pink-500 to-rose-600'}`;
+                                }
+                            }}
+                        />
+                    ) : (
+                        member.name.charAt(0)
+                    )}
                 </div>
                 <p className="text-sm font-semibold text-foreground">{member.name}</p>
                 
