@@ -242,8 +242,16 @@ export default function Welcome() {
                             <span className="font-semibold text-white">Bani Ali Dahlan</span>
                         </div>
                         <p className="text-sm text-white/40">
-                            &copy; {new Date().getFullYear()} Silsilah Keluarga Bani Ali Dahlan. Dibuat dengan ❤️ untuk
-                            keluarga besar.
+                            &copy; {new Date().getFullYear()} Silsilah Keluarga Bani Ali Dahlan. Dibuat dengan ❤️ oleh{' '}
+                            <a 
+                                href="https://simpleakunting.biz.id/SolusiConsult.html" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="text-white/60 hover:text-white hover:underline transition-colors"
+                            >
+                                Kurniawan
+                            </a>{' '}
+                            untuk keluarga besar.
                         </p>
                     </div>
                 </footer>
