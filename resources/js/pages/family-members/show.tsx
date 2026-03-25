@@ -109,13 +109,27 @@ export default function FamilyMemberShow() {
                                         </div>
                                     )}
                                     {member.spouses && member.spouses.length > 0 && (
-                                        <div className="flex flex-col gap-1 text-sm text-muted-foreground">
-                                            {member.spouses.map(spouse => (
-                                                <div key={spouse.id} className="flex items-center gap-2">
-                                                    <Heart className="h-4 w-4 text-pink-400" />
-                                                    Pasangan: {spouse.name}
-                                                </div>
-                                            ))}
+                                        <div className="col-span-1 border-t border-sidebar-border/50 pt-3 sm:col-span-2">
+                                            <p className="mb-3 text-sm font-semibold text-foreground">Pasangan</p>
+                                            <div className="flex flex-col gap-4">
+                                                {member.spouses.map(spouse => (
+                                                    <div key={spouse.id} className="flex items-center gap-3 rounded-lg border border-sidebar-border/50 bg-muted/10 p-3">
+                                                        <div className={`flex h-12 w-12 shrink-0 overflow-hidden items-center justify-center rounded-full text-sm font-bold text-white shadow-sm ${spouse.photo ? 'bg-muted/30' : (spouse.gender === 'male' ? 'bg-gradient-to-br from-sky-500 to-blue-600' : 'bg-gradient-to-br from-pink-500 to-rose-600')}`}>
+                                                            {spouse.photo ? (
+                                                                <img src={`/storage/${spouse.photo}`} alt={spouse.name} className="h-full w-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                                                            ) : (
+                                                                spouse.name.charAt(0).toUpperCase()
+                                                            )}
+                                                        </div>
+                                                        <div className="flex flex-col">
+                                                            <span className="text-sm font-semibold text-foreground">{spouse.name}</span>
+                                                            <span className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
+                                                                <Heart className="h-3 w-3 text-pink-400" /> {spouse.gender === 'male' ? 'Suami' : 'Istri'}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
                                         </div>
                                     )}
                                 </div>

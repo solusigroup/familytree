@@ -68,6 +68,13 @@ class FamilyMemberController extends Controller
 
         // Save spouses
         if (!empty($spousesData)) {
+            foreach ($spousesData as $key => $spouseData) {
+                if (isset($spouseData['photo']) && $spouseData['photo'] instanceof \Illuminate\Http\UploadedFile) {
+                    $spousesData[$key]['photo'] = $spouseData['photo']->store('family-photos', 'public');
+                } else {
+                    unset($spousesData[$key]['photo']);
+                }
+            }
             $member->spouses()->createMany($spousesData);
         }
 
@@ -136,15 +143,36 @@ class FamilyMemberController extends Controller
         // Update spouses
         $existingSpouseIds = [];
         foreach ($spousesData as $spouseData) {
+            $isNewPhotoUploaded = isset($spouseData['photo']) && $spouseData['photo'] instanceof \Illuminate\Http\UploadedFile;
+            
+            if ($isNewPhotoUploaded) {
+                $spouseData['photo'] = $spouseData['photo']->store('family-photos', 'public');
+            } else {
+                unset($spouseData['photo']);
+            }
+
             if (!empty($spouseData['id'])) {
-                $familyMember->spouses()->where('id', $spouseData['id'])->update($spouseData);
+                $existingSpouse = $familyMember->spouses()->where('id', $spouseData['id'])->first();
+                if ($existingSpouse) {
+                    if ($isNewPhotoUploaded && $existingSpouse->photo) {
+                        Storage::disk('public')->delete($existingSpouse->photo);
+                    }
+                    $existingSpouse->update($spouseData);
+                }
                 $existingSpouseIds[] = $spouseData['id'];
             } else {
                 $newSpouse = $familyMember->spouses()->create($spouseData);
                 $existingSpouseIds[] = $newSpouse->id;
             }
         }
-        $familyMember->spouses()->whereNotIn('id', $existingSpouseIds)->delete();
+        
+        $removedSpouses = $familyMember->spouses()->whereNotIn('id', $existingSpouseIds)->get();
+        foreach ($removedSpouses as $removedSpouse) {
+            if ($removedSpouse->photo) {
+                Storage::disk('public')->delete($removedSpouse->photo);
+            }
+            $removedSpouse->delete();
+        }
 
         return redirect()->route('family-members.index')
             ->with('success', 'Data anggota keluarga berhasil diperbarui.');
@@ -158,6 +186,12 @@ class FamilyMemberController extends Controller
         // Delete photo if exists
         if ($familyMember->photo) {
             Storage::disk('public')->delete($familyMember->photo);
+        }
+
+        foreach ($familyMember->spouses as $spouse) {
+            if ($spouse->photo) {
+                Storage::disk('public')->delete($spouse->photo);
+            }
         }
 
         $familyMember->delete();

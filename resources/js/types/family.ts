@@ -6,6 +6,7 @@ export interface Spouse {
     gender: 'male' | 'female';
     birth_date: string | null;
     death_date: string | null;
+    photo: string | null;
     created_at?: string;
     updated_at?: string;
 }

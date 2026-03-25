@@ -41,6 +41,7 @@ export default function FamilyMemberForm() {
             gender: s.gender,
             birth_date: s.birth_date?.split('T')[0] ?? '',
             death_date: s.death_date?.split('T')[0] ?? '',
+            photo: s.photo ?? null as any,
         })) ?? [],
         photo: null as File | null,
     });
@@ -61,7 +62,7 @@ export default function FamilyMemberForm() {
     const addSpouse = () => {
         setData('spouses', [
             ...data.spouses,
-            { name: '', gender: data.gender === 'male' ? 'female' : 'male', birth_date: '', death_date: '' } as any
+            { name: '', gender: data.gender === 'male' ? 'female' : 'male', birth_date: '', death_date: '', photo: null } as any
         ]);
     };
 
@@ -71,7 +72,7 @@ export default function FamilyMemberForm() {
         setData('spouses', newSpouses);
     };
 
-    const updateSpouse = (index: number, field: string, value: string) => {
+    const updateSpouse = (index: number, field: string, value: any) => {
         const newSpouses = [...data.spouses];
         newSpouses[index] = { ...newSpouses[index], [field]: value };
         setData('spouses', newSpouses);
@@ -330,6 +331,23 @@ export default function FamilyMemberForm() {
                                                     onChange={(e) => updateSpouse(index, 'death_date', e.target.value)}
                                                     className="w-full rounded-lg border border-sidebar-border/70 bg-background px-3 py-2 text-sm"
                                                 />
+                                            </div>
+                                            
+                                            {/* Photo */}
+                                            <div className="md:col-span-2">
+                                                <label className="mb-1.5 block text-sm font-medium">Foto Pasangan (Opsional)</label>
+                                                {spouse.photo && typeof spouse.photo === 'string' && (
+                                                    <div className="mb-2 h-12 w-12 overflow-hidden rounded-full border border-sidebar-border/70">
+                                                        <img src={`/storage/${spouse.photo}`} alt={spouse.name} className="h-full w-full object-cover" />
+                                                    </div>
+                                                )}
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={(e) => updateSpouse(index, 'photo', e.target.files?.[0] ?? null)}
+                                                    className="w-full rounded-lg border border-sidebar-border/70 bg-background px-3 py-2 text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-pink-500/10 file:px-4 file:py-1 file:text-sm file:font-medium file:text-pink-400 transition-colors focus:border-pink-500/50 focus:outline-none focus:ring-2 focus:ring-pink-500/20"
+                                                />
+                                                {(errors as any)[`spouses.${index}.photo`] && <p className="mt-1 text-xs text-red-400">{(errors as any)[`spouses.${index}.photo`]}</p>}
                                             </div>
                                         </div>
                                     </div>

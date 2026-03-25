@@ -81,11 +81,20 @@ export function TreeNode({ member, depth = 0, onNodeClick }: TreeNodeProps) {
                 <p className="text-sm font-semibold text-foreground">{member.name}</p>
                 
                 {member.spouses && member.spouses.length > 0 && (
-                    <div className="mt-1 flex flex-col items-center gap-0.5 border-t border-foreground/10 pt-1">
+                    <div className="mt-2 flex flex-col items-center gap-1.5 border-t border-foreground/10 pt-2">
                         {member.spouses.map(spouse => (
-                            <p key={spouse.id} className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
-                                <Heart className="h-3 w-3 text-pink-400" /> {spouse.name}
-                            </p>
+                            <div key={spouse.id} className="flex items-center gap-1.5 rounded-full border border-sidebar-border/30 bg-muted/20 pr-3 shadow-sm hover:bg-muted/30">
+                                <div className={`flex h-5 w-5 overflow-hidden rounded-full items-center justify-center text-[8px] font-bold text-white ${spouse.photo ? '' : (spouse.gender === 'male' ? 'bg-gradient-to-br from-sky-400 to-blue-500' : 'bg-gradient-to-br from-pink-400 to-rose-500')}`}>
+                                    {spouse.photo ? (
+                                        <img src={`/storage/${spouse.photo}`} alt={spouse.name} className="h-full w-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                                    ) : (
+                                        spouse.name.charAt(0)
+                                    )}
+                                </div>
+                                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                                    <Heart className="h-2.5 w-2.5 text-pink-400" /> {spouse.name}
+                                </span>
+                            </div>
                         ))}
                     </div>
                 )}

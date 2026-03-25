@@ -18,6 +18,7 @@ class Spouse extends Model
         'gender',
         'birth_date',
         'death_date',
+        'photo',
     ];
 
     /**
