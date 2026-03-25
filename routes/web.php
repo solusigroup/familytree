@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FamilyMemberController;
 use App\Http\Controllers\FamilyTreeController;
+use App\Http\Controllers\ActivityLogController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -11,6 +12,7 @@ Route::get('/', [FamilyTreeController::class, 'index'])->name('home');
 // Authenticated + verified routes
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
     Route::get('gallery', [FamilyMemberController::class, 'gallery'])->name('gallery');
     Route::resource('family-members', FamilyMemberController::class);
     Route::get('family-tree', [FamilyMemberController::class, 'tree'])->name('family-tree');

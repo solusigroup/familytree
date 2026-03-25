@@ -1,6 +1,7 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { useState, useRef, useCallback } from 'react';
-import { ZoomIn, ZoomOut, RotateCcw, Maximize2, Info, X, Calendar, MapPin, Heart, ArrowLeft } from 'lucide-react';
+import { ZoomIn, ZoomOut, RotateCcw, Maximize2, Info, X, Calendar, MapPin, Heart, ArrowLeft, Download, Loader2 } from 'lucide-react';
+import * as htmlToImage from 'html-to-image';
 import AppLayout from '@/layouts/app-layout';
 import { TreeNode } from '@/components/tree-node';
 import type { BreadcrumbItem, FamilyMember } from '@/types';
@@ -18,6 +19,8 @@ export default function FamilyTree() {
     const [offset, setOffset] = useState({ x: 0, y: 0 });
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
     const containerRef = useRef<HTMLDivElement>(null);
+    const contentRef = useRef<HTMLDivElement>(null);
+    const [isExporting, setIsExporting] = useState(false);
 
     const handleZoomIn = () => setZoom((z) => Math.min(z + 0.15, 2.5));
     const handleZoomOut = () => setZoom((z) => Math.max(z - 0.15, 0.3));
@@ -56,6 +59,29 @@ export default function FamilyTree() {
         setZoom((z) => Math.min(Math.max(z + delta, 0.3), 2.5));
     }, []);
 
+    const handleExport = async () => {
+        if (!contentRef.current) return;
+        try {
+            setIsExporting(true);
+            await new Promise((resolve) => setTimeout(resolve, 100));
+
+            const dataUrl = await htmlToImage.toPng(contentRef.current, {
+                pixelRatio: 2,
+                backgroundColor: 'transparent',
+            });
+
+            const link = document.createElement('a');
+            link.download = `Silsilah-Bani-Ali-Dahlan-${new Date().toISOString().split('T')[0]}.png`;
+            link.href = dataUrl;
+            link.click();
+        } catch (error: any) {
+            console.error('Error exporting tree:', error);
+            alert(`Gagal membuat gambar: ${error?.message || String(error)}`);
+        } finally {
+            setIsExporting(false);
+        }
+    };
+
     const formatDate = (dateStr: string | null) => {
         if (!dateStr) return null;
         return new Date(dateStr).toLocaleDateString('id-ID', {
@@ -81,6 +107,16 @@ export default function FamilyTree() {
                         <h2 className="text-lg font-bold">Pohon Keluarga Bani Ali Dahlan</h2>
                     </div>
                     <div className="flex items-center gap-1">
+                        <button
+                            onClick={handleExport}
+                            disabled={isExporting}
+                            className="flex h-9 items-center justify-center gap-2 rounded-lg border border-sidebar-border/70 px-3 text-sm font-medium transition-colors hover:bg-muted disabled:opacity-50"
+                            title="Export ke PNG"
+                        >
+                            {isExporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                            <span className="hidden sm:inline">{isExporting ? 'Memproses...' : 'Export'}</span>
+                        </button>
+                        <div className="mx-1 h-6 w-px bg-sidebar-border/70" />
                         <button
                             onClick={handleZoomOut}
                             className="flex h-9 w-9 items-center justify-center rounded-lg border border-sidebar-border/70 transition-colors hover:bg-muted"
@@ -155,14 +191,25 @@ export default function FamilyTree() {
                                 </Link>
                             </div>
                         ) : (
-                            <div className="flex flex-col items-center gap-8 pb-20">
-                                {tree.map((root) => (
-                                    <TreeNode
-                                        key={root.id}
-                                        member={root}
-                                        onNodeClick={(m) => setSelectedMember(m)}
-                                    />
-                                ))}
+                            <div
+                                ref={contentRef}
+                                className="flex flex-col items-center gap-12 p-12 lg:p-24 rounded-[3rem] bg-background text-foreground"
+                            >
+                                <div className="text-center mb-4">
+                                    <h1 className="text-3xl font-extrabold text-foreground mb-2">Pohon Keluarga Bani Ali Dahlan</h1>
+                                    <p className="text-muted-foreground">
+                                        Diekspor pada {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                    </p>
+                                </div>
+                                <div className="flex flex-col items-center gap-8 pb-10">
+                                    {tree.map((root) => (
+                                        <TreeNode
+                                            key={root.id}
+                                            member={root}
+                                            onNodeClick={(m) => setSelectedMember(m)}
+                                        />
+                                    ))}
+                                </div>
                             </div>
                         )}
                     </div>
@@ -238,12 +285,12 @@ export default function FamilyTree() {
                                             </div>
                                         </div>
                                     )}
-                                    {selectedMember.spouse_name && (
+                                    {selectedMember.spouses && selectedMember.spouses.length > 0 && (
                                         <div className="flex items-center gap-3 rounded-lg bg-muted/30 p-3 text-sm">
                                             <Heart className="h-4 w-4 shrink-0 text-pink-400" />
                                             <div>
                                                 <p className="text-xs text-muted-foreground">Pasangan</p>
-                                                <p className="font-medium">{selectedMember.spouse_name}</p>
+                                                <p className="font-medium">{selectedMember.spouses.map(s => s.name).join(', ')}</p>
                                             </div>
                                         </div>
                                     )}
