@@ -14,10 +14,10 @@ function MiniTreeNode({ member, depth = 0 }: { member: FamilyMember; depth?: num
         <div className="flex flex-col items-center">
             <div
                 className={`relative rounded-xl border px-4 py-2 text-center transition-all duration-300 hover:scale-105 ${depth === 0
-                        ? 'border-amber-400/50 bg-gradient-to-br from-amber-500/20 to-orange-500/20 shadow-lg shadow-amber-500/10'
-                        : depth === 1
-                            ? 'border-emerald-400/40 bg-gradient-to-br from-emerald-500/15 to-teal-500/15'
-                            : 'border-sky-400/30 bg-gradient-to-br from-sky-500/10 to-blue-500/10'
+                    ? 'border-amber-400/50 bg-gradient-to-br from-amber-500/20 to-orange-500/20 shadow-lg shadow-amber-500/10'
+                    : depth === 1
+                        ? 'border-emerald-400/40 bg-gradient-to-br from-emerald-500/15 to-teal-500/15'
+                        : 'border-sky-400/30 bg-gradient-to-br from-sky-500/10 to-blue-500/10'
                     }`}
             >
                 <p className="text-sm font-semibold text-white">{member.name}</p>
@@ -241,7 +241,7 @@ export default function Welcome() {
                             <span className="font-semibold text-white">Bani Ali Dahlan</span>
                         </div>
                         <p className="text-sm text-white/40">
-                            &copy; {new Date().getFullYear()} Silsilah Keluarga Bani Ali Dahlan. Dibuat dengan ❤️ oleh
+                            &copy; {new Date().getFullYear()} Silsilah Keluarga Bani Ali Dahlan. Dibuat dengan ❤️ oleh{' '}
                             <a
                                 href="https://simpleakunting.biz.id/SolusiConsult.html"
                                 target="_blank"
@@ -250,7 +250,7 @@ export default function Welcome() {
                             >
                                 Kurniawan
                             </a>
-                            untuk keluarga besar.
+                            {' '}untuk keluarga besar.
                         </p>
                     </div>
                 </footer>
