@@ -211,4 +211,19 @@ class FamilyMemberController extends Controller
             'tree' => $tree,
         ]);
     }
+
+    /**
+     * Display the family gallery.
+     */
+    public function gallery(): Response
+    {
+        $members = FamilyMember::with('spouses')
+            ->orderBy('generation')
+            ->orderBy('name')
+            ->get();
+
+        return Inertia::render('family-members/gallery', [
+            'members' => $members,
+        ]);
+    }
 }
