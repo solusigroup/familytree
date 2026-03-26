@@ -20,6 +20,29 @@ function MiniTreeNode({ member, depth = 0 }: { member: FamilyMember; depth?: num
                         : 'border-sky-400/30 bg-gradient-to-br from-sky-500/10 to-blue-500/10'
                     }`}
             >
+                <div
+                    className={`mx-auto mb-1 flex h-8 w-8 overflow-hidden items-center justify-center rounded-full text-xs font-bold text-white ${
+                        member.photo ? 'bg-transparent ring-1 ring-white/20' : (member.gender === 'male'
+                            ? 'bg-gradient-to-br from-sky-500/40 to-blue-600/40'
+                            : 'bg-gradient-to-br from-pink-500/40 to-rose-600/40')
+                    }`}
+                >
+                    {member.photo ? (
+                        <img 
+                            src={`/storage/${member.photo}`} 
+                            alt={member.name} 
+                            className="h-full w-full object-cover"
+                            onError={(e) => {
+                                (e.target as HTMLImageElement).style.display = 'none';
+                                if (e.currentTarget.parentElement) {
+                                    e.currentTarget.parentElement.innerText = member.name.charAt(0);
+                                }
+                            }}
+                        />
+                    ) : (
+                        member.name.charAt(0)
+                    )}
+                </div>
                 <p className="text-sm font-semibold text-white">{member.name}</p>
                 {member.spouses && member.spouses.length > 0 && (
                     <div className="flex flex-col gap-0.5 mt-1">
@@ -35,7 +58,7 @@ function MiniTreeNode({ member, depth = 0 }: { member: FamilyMember; depth?: num
                 <div className="flex flex-col items-center">
                     <div className="h-6 w-px bg-gradient-to-b from-white/30 to-white/10" />
                     <div className="flex gap-4">
-                        {member.children_recursive!.slice(0, 3).map((child) => (
+                        {member.children_recursive!.map((child) => (
                             <MiniTreeNode key={child.id} member={child} depth={depth + 1} />
                         ))}
                     </div>

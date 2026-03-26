@@ -128,6 +128,9 @@ class FamilyMemberController extends Controller
                 Storage::disk('public')->delete($familyMember->photo);
             }
             $data['photo'] = $request->file('photo')->store('family-photos', 'public');
+        } else {
+            // Remove photo from data if not uploading a new one
+            unset($data['photo']);
         }
 
         // Auto-calculate generation
