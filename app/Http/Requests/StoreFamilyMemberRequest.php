@@ -26,7 +26,7 @@ class StoreFamilyMemberRequest extends FormRequest
             'death_date' => ['nullable', 'date', 'after_or_equal:birth_date'],
             'birth_place' => ['nullable', 'string', 'max:255'],
             'bio' => ['nullable', 'string'],
-            'photo' => ['nullable', 'image', 'max:2048'],
+            'photo' => ['nullable', 'image', 'max:5120'],
             'parent_id' => ['nullable', 'exists:family_members,id'],
             'parent_spouse_id' => ['nullable', 'exists:spouses,id'],
             'spouses' => ['nullable', 'array'],
@@ -35,7 +35,7 @@ class StoreFamilyMemberRequest extends FormRequest
             'spouses.*.gender' => ['required', 'in:male,female'],
             'spouses.*.birth_date' => ['nullable', 'date'],
             'spouses.*.death_date' => ['nullable', 'date', 'after_or_equal:spouses.*.birth_date'],
-            'spouses.*.photo' => ['nullable', 'image', 'max:2048'],
+            'spouses.*.photo' => ['nullable', 'image', 'max:5120'],
         ];
     }
 
