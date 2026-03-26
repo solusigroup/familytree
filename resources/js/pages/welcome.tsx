@@ -1,5 +1,5 @@
 import { Head, Link, usePage } from '@inertiajs/react';
-import { TreesIcon, Users, Layers, LogIn, UserPlus, ChevronDown, Heart } from 'lucide-react';
+import { TreesIcon, Users, Layers, LogIn, UserPlus, ChevronDown, Heart, BookOpen } from 'lucide-react';
 import type { FamilyMember, FamilyTreeStats } from '@/types';
 
 type WelcomeProps = {
@@ -112,14 +112,34 @@ export default function Welcome() {
                         </div>
                         <div className="flex items-center gap-3">
                             {isLoggedIn ? (
-                                <Link
-                                    href="/dashboard"
-                                    className="rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-amber-500/25 transition-all duration-300 hover:shadow-amber-500/40"
-                                >
-                                    Dashboard
-                                </Link>
+                                <>
+                                    <a
+                                        href="/panduan.html"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-2 rounded-xl border border-white/10 px-5 py-2.5 text-sm font-medium text-white/80 transition-all hover:border-white/20 hover:bg-white/5 hover:text-white"
+                                    >
+                                        <BookOpen className="h-4 w-4" />
+                                        Panduan
+                                    </a>
+                                    <Link
+                                        href="/dashboard"
+                                        className="rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-amber-500/25 transition-all duration-300 hover:shadow-amber-500/40"
+                                    >
+                                        Dashboard
+                                    </Link>
+                                </>
                             ) : (
                                 <>
+                                    <a
+                                        href="/panduan.html"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-2 rounded-xl border border-white/10 px-5 py-2.5 text-sm font-medium text-white/80 transition-all hover:border-white/20 hover:bg-white/5 hover:text-white"
+                                    >
+                                        <BookOpen className="h-4 w-4" />
+                                        Panduan
+                                    </a>
                                     <Link
                                         href="/login"
                                         className="flex items-center gap-2 rounded-xl border border-white/10 px-5 py-2.5 text-sm font-medium text-white/80 transition-all hover:border-white/20 hover:bg-white/5 hover:text-white"

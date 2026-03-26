@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { LayoutGrid, Users, TreesIcon, Images, ScrollText } from 'lucide-react';
+import { LayoutGrid, Users, TreesIcon, Images, BookOpen } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -22,11 +22,6 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Log Aktivitas',
-        href: '/activity-logs',
-        icon: ScrollText,
-    },
-    {
         title: 'Galeri Keluarga',
         href: '/gallery',
         icon: Images,
@@ -43,7 +38,13 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
-const footerNavItems: NavItem[] = [];
+const footerNavItems: NavItem[] = [
+    {
+        title: 'Panduan',
+        href: '/panduan.html',
+        icon: BookOpen,
+    },
+];
 
 export function AppSidebar() {
     return (

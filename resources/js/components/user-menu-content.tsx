@@ -1,5 +1,5 @@
 import { Link, router } from '@inertiajs/react';
-import { LogOut, Settings } from 'lucide-react';
+import { LogOut, Settings, ScrollText } from 'lucide-react';
 import {
     DropdownMenuGroup,
     DropdownMenuItem,
@@ -40,8 +40,18 @@ export function UserMenuContent({ user }: Props) {
                         prefetch
                         onClick={cleanup}
                     >
-                        <Settings className="mr-2" />
+                        <Settings className="mr-2 h-4 w-4" />
                         Settings
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link
+                        className="block w-full cursor-pointer"
+                        href="/activity-logs"
+                        onClick={cleanup}
+                    >
+                        <ScrollText className="mr-2 h-4 w-4" />
+                        Log Aktivitas
                     </Link>
                 </DropdownMenuItem>
             </DropdownMenuGroup>

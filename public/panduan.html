@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan Pengoperasian - Silsilah Keluarga</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --secondary: #10b981;
+            --bg: #f8fafc;
+            --sidebar-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 300px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            border-right: 1px solid #e2e8f0;
+            padding: 2rem;
+            position: fixed;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .sidebar h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .nav-list {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            display: block;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+            background: #f1f5f9;
+        }
+
+        .nav-link.active {
+            color: var(--primary);
+            background: #eef2ff;
+        }
+
+        /* Main Content Styling */
+        .main-content {
+            margin-left: 300px;
+            padding: 4rem;
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+            scroll-margin-top: 4rem;
+        }
+
+        .section-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: #eef2ff;
+            color: var(--primary);
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h2 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            color: var(--text-muted);
+            font-size: 1.125rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid #f1f5f9;
+            margin-bottom: 2rem;
+        }
+
+        .step-list {
+            list-style: none;
+            counter-reset: step;
+        }
+
+        .step-item {
+            position: relative;
+            padding-left: 3.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .step-item::before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2.5rem;
+            height: 2.5rem;
+            background: var(--primary-light);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .step-title {
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .tip {
+            background: #ecfdf5;
+            border-left: 4px solid var(--secondary);
+            padding: 1.5rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .tip-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            color: #065f46;
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">BK</div>
+            <h2>Bani Dahlan</h2>
+        </div>
+        <ul class="nav-list">
+            <li class="nav-item"><a href="#pendahuluan" class="nav-link">Pendahuluan</a></li>
+            <li class="nav-item"><a href="#registrasi" class="nav-link">Registrasi Akun</a></li>
+            <li class="nav-item"><a href="#login" class="nav-link">Masuk (Login)</a></li>
+            <li class="nav-item"><a href="#manajemen" class="nav-link">Manajemen Anggota</a></li>
+            <li class="nav-item"><a href="#pohon" class="nav-link">Pohon Keluarga</a></li>
+            <li class="nav-item"><a href="#galeri" class="nav-link">Galeri Foto</a></li>
+            <li class="nav-item"><a href="#log" class="nav-link">Log Aktivitas</a></li>
+        </ul>
+    </div>
+
+    <main class="main-content">
+        <section id="pendahuluan" class="section">
+            <span class="badge">Edisi 2026</span>
+            <h1>Panduan Pengoperasian</h1>
+            <p>Selamat datang di sistem silsilah keluarga Bani Dahlan. Panduan ini dirancang untuk membantu Anda memahami cara mengelola data keluarga dengan mudah dan efisien.</p>
+        </section>
+
+        <section id="registrasi" class="section">
+            <div class="section-header">
+                <h2>1. Registrasi Akun</h2>
+                <p>Langkah pertama untuk bergabung dalam pengelolaan data keluarga.</p>
+            </div>
+            <div class="card">
+                <ul class="step-list">
+                    <li class="step-item">
+                        <span class="step-title">Buka Halaman Registrasi</span>
+                        Akses halaman pendaftaran melalui tombol <strong>Mulai Sekarang</strong> di halaman utama atau menu navigasi.
+                    </li>
+                    <li class="step-item">
+                        <span class="step-title">Isi Data Diri</span>
+                        Masukkan nama lengkap, alamat email yang aktif, dan buat kata sandi yang kuat.
+                    </li>
+                    <li class="step-item">
+                        <span class="step-title">Verifikasi</span>
+                        Klik tombol daftar. Anda mungkin perlu melakukan verifikasi email jika sistem mewajibkannya.
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="login" class="section">
+            <div class="section-header">
+                <h2>2. Masuk (Login)</h2>
+                <p>Masuk ke dashboard untuk mulai mengelola data.</p>
+            </div>
+            <div class="card">
+                <ul class="step-list">
+                    <li class="step-item">
+                        <span class="step-title">Gunakan Email & Sandi</span>
+                        Masukkan email dan kata sandi yang telah didaftarkan.
+                    </li>
+                    <li class="step-item">
+                        <span class="step-title">Lupa Kata Sandi?</span>
+                        Jangan khawatir, gunakan fitur <strong>Lupa Password</strong> untuk mereset sandi Anda melalui email.
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="manajemen" class="section">
+            <div class="section-header">
+                <h2>3. Manajemen Anggota Keluarga</h2>
+                <p>Bagian inti dari aplikasi untuk mengelola silsilah.</p>
+            </div>
+            <div class="card">
+                <ul class="step-list">
+                    <li class="step-item">
+                        <span class="step-title">Menambah Anggota Baru</span>
+                        Klik menu <strong>Anggota Keluarga</strong>, lalu pilih tombol <strong>Tambah Anggota</strong>. Isi data lengkap seperti tempat tanggal lahir, jenis kelamin, dan foto profil.
+                    </li>
+                    <li class="step-item">
+                        <span class="step-title">Menghubungkan Pasangan</span>
+                        Dalam form edit anggota, Anda dapat menambahkan pasangan. Sistem ini mendukung pencatatan pasangan lebih dari satu (poligami).
+                    </li>
+                    <li class="step-item">
+                        <span class="step-title">Update Data</span>
+                        Untuk memperbarui data, klik ikon <strong>Edit</strong> pada baris anggota yang diinginkan. Pastikan data seperti nomor telepon atau foto selalu diperbarui.
+                    </li>
+                </ul>
+                <div class="tip">
+                    <div class="tip-title">⚡ Tips Cepat</div>
+                    Gunakan fitur pencarian di tabel anggota untuk menemukan silsilah tertentu dengan cepat berdasarkan nama.
+                </div>
+            </div>
+        </section>
+
+        <section id="pohon" class="section">
+            <div class="section-header">
+                <h2>4. Eksplorasi Pohon Keluarga</h2>
+                <p>Visualisasi silsilah dalam bentuk diagram interaktif.</p>
+            </div>
+            <div class="card">
+                <p>Akses menu <strong>Pohon Keluarga</strong> untuk melihat bagan silsilah. Anda bisa menggeser (drag) dan memperbesar/memperkecil (zoom) tampilan.</p>
+                <ul class="step-list">
+                    <li class="step-item">
+                        <span class="step-title">Detail Anggota</span>
+                        Klik pada kotak nama di pohon untuk melihat detail singkat dan hubungan keluarga mereka.
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="galeri" class="section">
+            <div class="section-header">
+                <h2>5. Galeri Galeri Foto</h2>
+                <p>Simpan kenangan berharga dalam bentuk foto.</p>
+            </div>
+            <div class="card">
+                <p>Menu <strong>Galeri Keluarga</strong> memungkinkan Anda mengunggah foto-foto anggota keluarga secara kolektif.</p>
+            </div>
+        </section>
+
+        <section id="log" class="section">
+            <div class="section-header">
+                <h2>6. Memantau Log Aktivitas</h2>
+                <p>Transparansi setiap perubahan data.</p>
+            </div>
+            <div class="card">
+                <p>Semua perubahan data (siapa yang mengubah, kapan, dan bagian mana yang diubah) tercatat secara otomatis di menu <strong>Log Aktivitas</strong>. Ini berguna untuk menjaga integritas data keluarga.</p>
+            </div>
+        </section>
+
+        <footer style="margin-top: 5rem; text-align: center; color: var(--text-muted); border-top: 1px solid #e2e8f0; padding-top: 2rem;">
+            <p>&copy; 2026 Bani Dahlan Family System. Developed with modern standards.</p>
+        </footer>
+    </main>
+
+    <script>
+        // Simple active scroll highlight
+        window.addEventListener('scroll', () => {
+            let current = '';
+            document.querySelectorAll('.section').forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
