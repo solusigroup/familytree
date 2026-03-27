@@ -1,5 +1,5 @@
 import { Head, Link, usePage } from '@inertiajs/react';
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { ZoomIn, ZoomOut, RotateCcw, Maximize2, Info, X, Calendar, MapPin, Heart, ArrowLeft, Download, Loader2 } from 'lucide-react';
 import * as htmlToImage from 'html-to-image';
 import AppLayout from '@/layouts/app-layout';
@@ -54,9 +54,38 @@ export default function FamilyTree() {
     }, []);
 
     const handleWheel = useCallback((e: React.WheelEvent) => {
-        e.preventDefault();
-        const delta = e.deltaY > 0 ? -0.1 : 0.1;
-        setZoom((z) => Math.min(Math.max(z + delta, 0.3), 2.5));
+        if (e.ctrlKey || e.metaKey || e.altKey) {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? -0.1 : 0.1;
+            setZoom((z) => Math.min(Math.max(z + delta, 0.3), 2.5));
+        } else {
+            // Pan with mouse wheel
+            setOffset((prev) => ({
+                x: prev.x - (e.shiftKey ? e.deltaY : e.deltaX),
+                y: prev.y - (e.shiftKey ? 0 : e.deltaY),
+            }));
+        }
+    }, []);
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            // Only handle shortcuts if not typing in an input
+            if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+            const step = 60;
+            switch (e.key) {
+                case 'ArrowLeft': setOffset(prev => ({ ...prev, x: prev.x + step })); break;
+                case 'ArrowRight': setOffset(prev => ({ ...prev, x: prev.x - step })); break;
+                case 'ArrowUp': setOffset(prev => ({ ...prev, y: prev.y + step })); break;
+                case 'ArrowDown': setOffset(prev => ({ ...prev, y: prev.y - step })); break;
+                case '+':
+                case '=': if (e.ctrlKey) { e.preventDefault(); handleZoomIn(); } break;
+                case '-': if (e.ctrlKey) { e.preventDefault(); handleZoomOut(); } break;
+                case '0': if (e.ctrlKey) { e.preventDefault(); handleReset(); } break;
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
     }, []);
 
     const handleExport = async () => {
@@ -172,6 +201,63 @@ export default function FamilyTree() {
                             backgroundSize: '24px 24px',
                         }}
                     />
+
+                    {/* Navigation Sliders */}
+                    <div className="absolute bottom-6 left-1/2 z-10 w-64 -translate-x-1/2 rounded-full bg-background/80 p-2 shadow-lg backdrop-blur-md border border-sidebar-border/50 transition-opacity hover:opacity-100 opacity-60 flex items-center gap-2">
+                        <button 
+                            onClick={() => setOffset(prev => ({ ...prev, x: prev.x + 100 }))}
+                            className="p-1.5 hover:bg-muted rounded-full transition-colors"
+                            title="Geser Kiri"
+                        >
+                            <span className="sr-only">Kiri</span>
+                            <ArrowLeft className="h-4 w-4" />
+                        </button>
+                        <input
+                            type="range"
+                            min="-2500"
+                            max="2500"
+                            value={-offset.x}
+                            onChange={(e) => setOffset((prev) => ({ ...prev, x: -parseInt(e.target.value) }))}
+                            className="h-1.5 w-full cursor-pointer appearance-none rounded-lg bg-muted/50 accent-amber-500 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-amber-600"
+                        />
+                        <button 
+                            onClick={() => setOffset(prev => ({ ...prev, x: prev.x - 100 }))}
+                            className="p-1.5 hover:bg-muted rounded-full transition-colors"
+                            title="Geser Kanan"
+                        >
+                            <span className="sr-only">Kanan</span>
+                            <ArrowLeft className="h-4 w-4 rotate-180" />
+                        </button>
+                    </div>
+
+                    <div className="absolute right-6 top-1/2 z-10 h-64 -translate-y-1/2 rounded-full bg-background/80 p-2 shadow-lg backdrop-blur-md border border-sidebar-border/50 transition-opacity hover:opacity-100 opacity-60 flex flex-col items-center gap-2">
+                        <button 
+                            onClick={() => setOffset(prev => ({ ...prev, y: prev.y + 100 }))}
+                            className="p-1.5 hover:bg-muted rounded-full transition-colors"
+                            title="Geser Atas"
+                        >
+                            <span className="sr-only">Atas</span>
+                            <ArrowLeft className="h-4 w-4 rotate-90" />
+                        </button>
+                        <div className="h-full py-2">
+                            <input
+                                type="range"
+                                min="-2500"
+                                max="2500"
+                                value={-offset.y}
+                                onChange={(e) => setOffset((prev) => ({ ...prev, y: -parseInt(e.target.value) }))}
+                                className="h-full w-1.5 cursor-pointer appearance-none rounded-lg bg-muted/50 accent-amber-500 [writing-mode:bt-lr] [-webkit-appearance:slider-vertical] [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-amber-600"
+                            />
+                        </div>
+                        <button 
+                            onClick={() => setOffset(prev => ({ ...prev, y: prev.y - 100 }))}
+                            className="p-1.5 hover:bg-muted rounded-full transition-colors"
+                            title="Geser Bawah"
+                        >
+                            <span className="sr-only">Bawah</span>
+                            <ArrowLeft className="h-4 w-4 -rotate-90" />
+                        </button>
+                    </div>
 
                     <div
                         className="absolute inset-0 flex items-start justify-center pt-12 transition-transform"
