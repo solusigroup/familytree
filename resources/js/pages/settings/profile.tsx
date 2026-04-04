@@ -43,6 +43,26 @@ export default function Profile({
                         description="Update your name and email address"
                     />
 
+                    <div className="grid gap-2">
+                        <Label>Account Role</Label>
+                        <div className="flex items-center gap-2">
+                            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset ${
+                                (auth as any).user.role === 'superadmin' 
+                                    ? 'bg-purple-500/10 text-purple-400 ring-purple-500/20' 
+                                    : (auth as any).user.role === 'editor'
+                                    ? 'bg-emerald-500/10 text-emerald-400 ring-emerald-500/20'
+                                    : (auth as any).user.role === 'viewer'
+                                    ? 'bg-cyan-500/10 text-cyan-400 ring-cyan-500/20'
+                                    : 'bg-amber-500/10 text-amber-400 ring-amber-500/20'
+                            }`}>
+                                {(auth as any).user.role?.toUpperCase()}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                                {(auth as any).user.role === 'viewer' ? '(Read-only access)' : '(Full management access)'}
+                            </span>
+                        </div>
+                    </div>
+
                     <Form
                         {...ProfileController.update.form()}
                         options={{
@@ -53,27 +73,6 @@ export default function Profile({
                         {({ processing, recentlySuccessful, errors }) => (
                             <>
                                 <div className="grid gap-2">
-                                    <Label>Account Role</Label>
-                                    <div className="flex items-center gap-2">
-                                        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset ${
-                                            (auth as any).user.role === 'superadmin' 
-                                                ? 'bg-purple-500/10 text-purple-400 ring-purple-500/20' 
-                                                : (auth as any).user.role === 'editor'
-                                                ? 'bg-emerald-500/10 text-emerald-400 ring-emerald-500/20'
-                                                : (auth as any).user.role === 'viewer'
-                                                ? 'bg-cyan-500/10 text-cyan-400 ring-cyan-500/20'
-                                                : 'bg-amber-500/10 text-amber-400 ring-amber-500/20'
-                                        }`}>
-                                            {(auth as any).user.role?.toUpperCase()}
-                                        </span>
-                                        <span className="text-xs text-muted-foreground">
-                                            {(auth as any).user.role === 'viewer' ? '(Read-only access)' : '(Full management access)'}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div className="grid gap-2">
-
                                     <Label htmlFor="name">Name</Label>
 
                                     <Input
