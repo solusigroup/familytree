@@ -42,16 +42,12 @@ class UserManagementController extends Controller
     {
         $user->load(['branchAssignments.familyMember']);
 
-        // Get all family members for branch assignment dropdown (flat list)
-        $familyMembers = FamilyMember::orderBy('generation')
-            ->orderBy('name')
-            ->get();
-
         return Inertia::render('admin/users/show', [
             'targetUser' => $user,
-            'familyMembers' => $familyMembers,
+            'familyMembers' => [],
         ]);
     }
+
 
 
     /**
