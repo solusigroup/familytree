@@ -49,7 +49,7 @@ class UserManagementController extends Controller
 
         return Inertia::render('admin/users/show', [
             'targetUser' => $user,
-            'familyMembers' => familyMembers,
+            'familyMembers' => $familyMembers,
         ]);
     }
 
