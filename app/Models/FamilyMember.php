@@ -127,4 +127,35 @@ class FamilyMember extends Model
             self::updateDescendantGenerations($child, $generation + 1);
         }
     }
+
+    /**
+     * Get all descendant IDs recursively.
+     *
+     * @return \Illuminate\Support\Collection<int, int>
+     */
+    public function getAllDescendantIds(): \Illuminate\Support\Collection
+    {
+        $ids = collect();
+        foreach ($this->children as $child) {
+            $ids->push($child->id);
+            $ids = $ids->merge($child->getAllDescendantIds());
+        }
+        return $ids;
+    }
+
+    /**
+     * Get all ancestor IDs up to the root.
+     *
+     * @return array<int>
+     */
+    public function getAncestorIds(): array
+    {
+        $ids = [];
+        $current = $this->parent;
+        while ($current) {
+            $ids[] = $current->id;
+            $current = $current->parent;
+        }
+        return $ids;
+    }
 }

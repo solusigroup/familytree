@@ -1,3 +1,6 @@
+export type UserRole = 'superadmin' | 'editor' | 'pending';
+export type UserStatus = 'active' | 'pending' | 'rejected';
+
 export type User = {
     id: number;
     name: string;
@@ -5,8 +8,13 @@ export type User = {
     avatar?: string;
     email_verified_at: string | null;
     two_factor_enabled?: boolean;
+    role: UserRole;
+    status: UserStatus;
+    approved_at: string | null;
+    approved_by: number | null;
     created_at: string;
     updated_at: string;
+    branch_assignments_count?: number;
     [key: string]: unknown;
 };
 

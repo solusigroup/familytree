@@ -1,5 +1,5 @@
-import { Link } from '@inertiajs/react';
-import { LayoutGrid, Users, TreesIcon, Images, BookOpen } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react';
+import { LayoutGrid, Users, TreesIcon, Images, BookOpen, Shield } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -38,6 +38,14 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
+const adminNavItems: NavItem[] = [
+    {
+        title: 'Kelola Pengguna',
+        href: '/admin/users',
+        icon: Shield,
+    },
+];
+
 const footerNavItems: NavItem[] = [
     {
         title: 'Panduan',
@@ -47,6 +55,9 @@ const footerNavItems: NavItem[] = [
 ];
 
 export function AppSidebar() {
+    const { auth } = usePage().props;
+    const isSuperadmin = auth?.user?.role === 'superadmin';
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -63,6 +74,7 @@ export function AppSidebar() {
 
             <SidebarContent>
                 <NavMain items={mainNavItems} />
+                {isSuperadmin && <NavMain items={adminNavItems} label="Administrasi" />}
             </SidebarContent>
 
             <SidebarFooter>

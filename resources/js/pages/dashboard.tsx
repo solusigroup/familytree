@@ -1,5 +1,5 @@
-import { Head, usePage } from '@inertiajs/react';
-import { LayoutGrid, Users, TreesIcon, Layers, TrendingUp } from 'lucide-react';
+import { Head, Link, usePage } from '@inertiajs/react';
+import { LayoutGrid, Users, TreesIcon, Layers, TrendingUp, Shield, UserCheck } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem, FamilyMember, FamilyTreeStats } from '@/types';
 
@@ -41,9 +41,11 @@ function DashStatCard({
 
 export default function Dashboard() {
     const { stats, recentMembers } = usePage<{
-        stats?: FamilyTreeStats;
+        stats?: FamilyTreeStats & { totalUsers?: number; pendingUsers?: number };
         recentMembers?: FamilyMember[];
     }>().props;
+    const { auth } = usePage().props;
+    const isSuperadmin = auth?.user?.role === 'superadmin';
 
     const totalMembers = stats?.totalMembers ?? 0;
     const totalGenerations = stats?.totalGenerations ?? 0;
@@ -66,8 +68,17 @@ export default function Dashboard() {
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <DashStatCard icon={Users} label="Total Anggota" value={totalMembers} color="amber" />
                     <DashStatCard icon={Layers} label="Total Generasi" value={totalGenerations} color="emerald" />
-                    <DashStatCard icon={TreesIcon} label="Pohon Keluarga" value={totalMembers > 0 ? 'Aktif' : 'Kosong'} color="sky" />
-                    <DashStatCard icon={TrendingUp} label="Status" value="Online" color="purple" />
+                    {isSuperadmin ? (
+                        <>
+                            <DashStatCard icon={UserCheck} label="Total Pengguna" value={stats?.totalUsers ?? 0} color="sky" />
+                            <DashStatCard icon={Shield} label="Menunggu Persetujuan" value={stats?.pendingUsers ?? 0} color="purple" />
+                        </>
+                    ) : (
+                        <>
+                            <DashStatCard icon={TreesIcon} label="Pohon Keluarga" value={totalMembers > 0 ? 'Aktif' : 'Kosong'} color="sky" />
+                            <DashStatCard icon={TrendingUp} label="Status" value="Online" color="purple" />
+                        </>
+                    )}
                 </div>
 
                 {/* Quick Links */}
@@ -96,18 +107,33 @@ export default function Dashboard() {
                             <p className="text-sm text-muted-foreground">Lihat visualisasi pohon</p>
                         </div>
                     </a>
-                    <a
-                        href="/family-members/create"
-                        className="group flex items-center gap-4 rounded-xl border border-sidebar-border/70 p-6 transition-all duration-300 hover:border-sky-500/30 hover:bg-sky-500/5"
-                    >
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-500/10">
-                            <LayoutGrid className="h-6 w-6 text-sky-400" />
-                        </div>
-                        <div>
-                            <h3 className="font-semibold text-foreground">Tambah Anggota</h3>
-                            <p className="text-sm text-muted-foreground">Daftarkan anggota baru</p>
-                        </div>
-                    </a>
+                    {isSuperadmin ? (
+                        <Link
+                            href="/admin/users"
+                            className="group flex items-center gap-4 rounded-xl border border-sidebar-border/70 p-6 transition-all duration-300 hover:border-purple-500/30 hover:bg-purple-500/5"
+                        >
+                            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-500/10">
+                                <Shield className="h-6 w-6 text-purple-400" />
+                            </div>
+                            <div>
+                                <h3 className="font-semibold text-foreground">Kelola Pengguna</h3>
+                                <p className="text-sm text-muted-foreground">Approve, reject, assign branch</p>
+                            </div>
+                        </Link>
+                    ) : (
+                        <a
+                            href="/family-members/create"
+                            className="group flex items-center gap-4 rounded-xl border border-sidebar-border/70 p-6 transition-all duration-300 hover:border-sky-500/30 hover:bg-sky-500/5"
+                        >
+                            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-500/10">
+                                <LayoutGrid className="h-6 w-6 text-sky-400" />
+                            </div>
+                            <div>
+                                <h3 className="font-semibold text-foreground">Tambah Anggota</h3>
+                                <p className="text-sm text-muted-foreground">Daftarkan anggota baru</p>
+                            </div>
+                        </a>
+                    )}
                 </div>
             </div>
         </AppLayout>

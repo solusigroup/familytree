@@ -10,7 +10,11 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function FamilyMemberIndex() {
-    const { members } = usePage<{ members: FamilyMember[] }>().props;
+    const { members, manageableIds, userRole } = usePage<{
+        members: FamilyMember[];
+        manageableIds: number[];
+        userRole: string;
+    }>().props;
     const [search, setSearch] = useState('');
 
     const filteredMembers = members.filter(
@@ -19,6 +23,12 @@ export default function FamilyMemberIndex() {
             m.birth_place?.toLowerCase().includes(search.toLowerCase()) ||
             m.spouses?.some(s => s.name.toLowerCase().includes(search.toLowerCase())),
     );
+
+    const canManage = (memberId: number) => {
+        return userRole === 'superadmin' || manageableIds.includes(memberId);
+    };
+
+    const canCreate = userRole === 'superadmin' || (userRole === 'editor' && manageableIds.length > 0);
 
     const handleDelete = (id: number, name: string) => {
         if (confirm(`Apakah Anda yakin ingin menghapus "${name}"?`)) {
@@ -45,15 +55,22 @@ export default function FamilyMemberIndex() {
                         <h1 className="text-2xl font-bold text-foreground">Anggota Keluarga</h1>
                         <p className="text-sm text-muted-foreground">
                             {members.length} anggota terdaftar
+                            {userRole === 'editor' && manageableIds.length > 0 && (
+                                <span className="ml-2 text-emerald-400">
+                                    · {manageableIds.length} dapat Anda kelola
+                                </span>
+                            )}
                         </p>
                     </div>
-                    <Link
-                        href="/family-members/create"
-                        className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-amber-500/25 transition-all hover:shadow-amber-500/40"
-                    >
-                        <Plus className="h-4 w-4" />
-                        Tambah Anggota
-                    </Link>
+                    {canCreate && (
+                        <Link
+                            href="/family-members/create"
+                            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-amber-500/25 transition-all hover:shadow-amber-500/40"
+                        >
+                            <Plus className="h-4 w-4" />
+                            Tambah Anggota
+                        </Link>
+                    )}
                 </div>
 
                 {/* Search */}
@@ -93,85 +110,99 @@ export default function FamilyMemberIndex() {
                                         </td>
                                     </tr>
                                 ) : (
-                                    filteredMembers.map((member) => (
-                                        <tr
-                                            key={member.id}
-                                            className="border-b border-sidebar-border/50 transition-colors hover:bg-muted/20"
-                                        >
-                                            <td className="px-4 py-3 font-medium">
-                                                <div className="flex items-center gap-3">
-                                                    <div className={`flex h-8 w-8 shrink-0 overflow-hidden items-center justify-center rounded-full text-xs font-bold text-white ${member.photo ? 'bg-muted/30' : (member.gender === 'male' ? 'bg-sky-500' : 'bg-pink-500')}`}>
-                                                        {member.photo ? (
-                                                            <img 
-                                                                src={`/storage/${member.photo}`} 
-                                                                alt="" 
-                                                                className="h-full w-full object-cover" 
-                                                                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                                                            />
-                                                        ) : (
-                                                            member.name.charAt(0)
+                                    filteredMembers.map((member) => {
+                                        const manageable = canManage(member.id);
+                                        return (
+                                            <tr
+                                                key={member.id}
+                                                className={`border-b border-sidebar-border/50 transition-colors hover:bg-muted/20 ${
+                                                    manageable && userRole === 'editor' ? 'bg-emerald-500/[0.02]' : ''
+                                                }`}
+                                            >
+                                                <td className="px-4 py-3 font-medium">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className={`flex h-8 w-8 shrink-0 overflow-hidden items-center justify-center rounded-full text-xs font-bold text-white ${member.photo ? 'bg-muted/30' : (member.gender === 'male' ? 'bg-sky-500' : 'bg-pink-500')}`}>
+                                                            {member.photo ? (
+                                                                <img 
+                                                                    src={`/storage/${member.photo}`} 
+                                                                    alt="" 
+                                                                    className="h-full w-full object-cover" 
+                                                                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                                                                />
+                                                            ) : (
+                                                                member.name.charAt(0)
+                                                            )}
+                                                        </div>
+                                                        <div className="flex items-center gap-2">
+                                                            <span>{member.name}</span>
+                                                            {manageable && userRole === 'editor' && (
+                                                                <span className="inline-flex h-2 w-2 rounded-full bg-emerald-400" title="Dalam cabang Anda" />
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-4 py-3">
+                                                    <span
+                                                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                                                            member.gender === 'male'
+                                                                ? 'bg-sky-500/10 text-sky-400'
+                                                                : 'bg-pink-500/10 text-pink-400'
+                                                        }`}
+                                                    >
+                                                        {member.gender === 'male' ? 'Laki-laki' : 'Perempuan'}
+                                                    </span>
+                                                </td>
+                                                <td className="px-4 py-3 text-muted-foreground">
+                                                    {member.birth_place || '-'}
+                                                </td>
+                                                <td className="px-4 py-3 text-muted-foreground">
+                                                    {formatDate(member.birth_date)}
+                                                </td>
+                                                <td className="px-4 py-3 text-muted-foreground">
+                                                    {member.spouses && member.spouses.length > 0
+                                                        ? member.spouses.map(s => s.name).join(', ')
+                                                        : '-'}
+                                                </td>
+                                                <td className="px-4 py-3">
+                                                    <span className="inline-flex items-center rounded-full bg-amber-500/10 px-2.5 py-0.5 text-xs font-medium text-amber-400">
+                                                        Gen {member.generation}
+                                                    </span>
+                                                </td>
+                                                <td className="px-4 py-3 text-muted-foreground">
+                                                    {member.parent?.name || '-'}
+                                                </td>
+                                                <td className="px-4 py-3">
+                                                    <div className="flex items-center justify-center gap-1">
+                                                        <Link
+                                                            href={`/family-members/${member.id}`}
+                                                            className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                                                            title="Lihat"
+                                                        >
+                                                            <Eye className="h-4 w-4" />
+                                                        </Link>
+                                                        {manageable && (
+                                                            <>
+                                                                <Link
+                                                                    href={`/family-members/${member.id}/edit`}
+                                                                    className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-amber-500/10 hover:text-amber-400"
+                                                                    title="Edit"
+                                                                >
+                                                                    <Pencil className="h-4 w-4" />
+                                                                </Link>
+                                                                <button
+                                                                    onClick={() => handleDelete(member.id, member.name)}
+                                                                    className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-red-500/10 hover:text-red-400"
+                                                                    title="Hapus"
+                                                                >
+                                                                    <Trash2 className="h-4 w-4" />
+                                                                </button>
+                                                            </>
                                                         )}
                                                     </div>
-                                                    <span>{member.name}</span>
-                                                </div>
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                <span
-                                                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                                                        member.gender === 'male'
-                                                            ? 'bg-sky-500/10 text-sky-400'
-                                                            : 'bg-pink-500/10 text-pink-400'
-                                                    }`}
-                                                >
-                                                    {member.gender === 'male' ? 'Laki-laki' : 'Perempuan'}
-                                                </span>
-                                            </td>
-                                            <td className="px-4 py-3 text-muted-foreground">
-                                                {member.birth_place || '-'}
-                                            </td>
-                                            <td className="px-4 py-3 text-muted-foreground">
-                                                {formatDate(member.birth_date)}
-                                            </td>
-                                            <td className="px-4 py-3 text-muted-foreground">
-                                                {member.spouses && member.spouses.length > 0
-                                                    ? member.spouses.map(s => s.name).join(', ')
-                                                    : '-'}
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                <span className="inline-flex items-center rounded-full bg-amber-500/10 px-2.5 py-0.5 text-xs font-medium text-amber-400">
-                                                    Gen {member.generation}
-                                                </span>
-                                            </td>
-                                            <td className="px-4 py-3 text-muted-foreground">
-                                                {member.parent?.name || '-'}
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                <div className="flex items-center justify-center gap-1">
-                                                    <Link
-                                                        href={`/family-members/${member.id}`}
-                                                        className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                                                        title="Lihat"
-                                                    >
-                                                        <Eye className="h-4 w-4" />
-                                                    </Link>
-                                                    <Link
-                                                        href={`/family-members/${member.id}/edit`}
-                                                        className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-amber-500/10 hover:text-amber-400"
-                                                        title="Edit"
-                                                    >
-                                                        <Pencil className="h-4 w-4" />
-                                                    </Link>
-                                                    <button
-                                                        onClick={() => handleDelete(member.id, member.name)}
-                                                        className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-red-500/10 hover:text-red-400"
-                                                        title="Hapus"
-                                                    >
-                                                        <Trash2 className="h-4 w-4" />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
                                 )}
                             </tbody>
                         </table>

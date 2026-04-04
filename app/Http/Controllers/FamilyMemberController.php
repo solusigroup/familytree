@@ -22,8 +22,13 @@ class FamilyMemberController extends Controller
             ->orderBy('name')
             ->get();
 
+        $user = auth()->user();
+        $manageableIds = $user->getManageableMemberIds()->toArray();
+
         return Inertia::render('family-members/index', [
             'members' => $members,
+            'manageableIds' => $manageableIds,
+            'userRole' => $user->role,
         ]);
     }
 
@@ -32,10 +37,21 @@ class FamilyMemberController extends Controller
      */
     public function create(): Response
     {
+        $this->authorize('create', FamilyMember::class);
+
+        $user = auth()->user();
         $parents = FamilyMember::with('spouses')
             ->orderBy('generation')
             ->orderBy('name')
             ->get(['id', 'name', 'gender', 'generation']);
+
+        // For editors, filter to only parents within their manageable branches
+        $manageableIds = $user->getManageableMemberIds();
+        if ($user->isEditor()) {
+            $parents = $parents->filter(function ($parent) use ($manageableIds) {
+                return $manageableIds->contains($parent->id);
+            })->values();
+        }
 
         return Inertia::render('family-members/form', [
             'parents' => $parents,
@@ -47,9 +63,17 @@ class FamilyMemberController extends Controller
      */
     public function store(StoreFamilyMemberRequest $request): RedirectResponse
     {
+        $this->authorize('create', FamilyMember::class);
+
+        $user = auth()->user();
         $data = $request->validated();
         $spousesData = $data['spouses'] ?? [];
         unset($data['spouses']);
+
+        // For editors, verify the parent is within their branch
+        if ($user->isEditor() && !$user->canCreateUnderParent($data['parent_id'] ?? null)) {
+            abort(403, 'Anda tidak memiliki izin untuk menambah anggota di cabang ini.');
+        }
 
         // Handle photo upload
         if ($request->hasFile('photo')) {
@@ -99,12 +123,24 @@ class FamilyMemberController extends Controller
      */
     public function edit(FamilyMember $familyMember): Response
     {
+        $this->authorize('update', $familyMember);
+
         $familyMember->load('spouses');
+
+        $user = auth()->user();
         $parents = FamilyMember::with('spouses')
             ->where('id', '!=', $familyMember->id)
             ->orderBy('generation')
             ->orderBy('name')
             ->get(['id', 'name', 'gender', 'generation']);
+
+        // For editors, filter parents to only their manageable branches
+        if ($user->isEditor()) {
+            $manageableIds = $user->getManageableMemberIds();
+            $parents = $parents->filter(function ($parent) use ($manageableIds) {
+                return $manageableIds->contains($parent->id);
+            })->values();
+        }
 
         return Inertia::render('family-members/form', [
             'member' => $familyMember,
@@ -117,6 +153,8 @@ class FamilyMemberController extends Controller
      */
     public function update(UpdateFamilyMemberRequest $request, FamilyMember $familyMember): RedirectResponse
     {
+        $this->authorize('update', $familyMember);
+
         $data = $request->validated();
         $spousesData = $data['spouses'] ?? [];
         unset($data['spouses']);
@@ -186,6 +224,8 @@ class FamilyMemberController extends Controller
      */
     public function destroy(FamilyMember $familyMember): RedirectResponse
     {
+        $this->authorize('delete', $familyMember);
+
         // Delete photo if exists
         if ($familyMember->photo) {
             Storage::disk('public')->delete($familyMember->photo);
