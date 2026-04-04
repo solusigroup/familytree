@@ -7,20 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Spouse;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Activitylog\LogOptions;
-
 class FamilyMember extends Model
 {
-    use HasFactory, LogsActivity;
-
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->logFillable()
-            ->logOnlyDirty()
-            ->dontSubmitEmptyLogs();
-    }
+    use HasFactory;
 
     protected $fillable = [
         'name',

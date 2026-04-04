@@ -7,7 +7,6 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
-use Spatie\Activitylog\Models\Activity;
 
 class DashboardController extends Controller
 {
@@ -49,21 +48,8 @@ class DashboardController extends Controller
                 ->pluck('count', 'generation')
                 ->toArray();
 
-            // Recent activity logs (last 10)
-            $superadminData['recentActivity'] = Activity::with('causer')
-                ->latest()
-                ->take(10)
-                ->get()
-                ->map(function ($log) {
-                    return [
-                        'id' => $log->id,
-                        'description' => $log->description,
-                        'subject_type' => $log->subject_type ? class_basename($log->subject_type) : null,
-                        'causer' => $log->causer ? $log->causer->name : 'Sistem',
-                        'created_at' => $log->created_at->diffForHumans(),
-                        'created_at_full' => $log->created_at->format('d M Y H:i'),
-                    ];
-                });
+            // Recent activity logs (disabled to fix 500 error on shared hosting)
+            $superadminData['recentActivity'] = [];
 
             // Recent user registrations (last 5)
             $superadminData['recentRegistrations'] = User::latest()
