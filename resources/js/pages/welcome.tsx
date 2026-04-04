@@ -226,8 +226,34 @@ export default function Welcome() {
                                 <h2 className="mb-3 text-3xl font-bold text-white">Pohon Keluarga</h2>
                                 <p className="text-white/50">Visualisasi silsilah dari generasi pertama</p>
                             </div>
-                            <div className="overflow-x-auto rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm">
-                                <div className="flex justify-center">
+                            <div 
+                                className="group relative overflow-auto rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm cursor-grab active:cursor-grabbing max-h-[700px]"
+                                onMouseDown={(e) => {
+                                    const ele = e.currentTarget;
+                                    const startPos = {
+                                        left: ele.scrollLeft,
+                                        top: ele.scrollTop,
+                                        x: e.clientX,
+                                        y: e.clientY,
+                                    };
+
+                                    const onMouseMove = (e: MouseEvent) => {
+                                        const dx = e.clientX - startPos.x;
+                                        const dy = e.clientY - startPos.y;
+                                        ele.scrollTop = startPos.top - dy;
+                                        ele.scrollLeft = startPos.left - dx;
+                                    };
+
+                                    const onMouseUp = () => {
+                                        document.removeEventListener('mousemove', onMouseMove);
+                                        document.removeEventListener('mouseup', onMouseUp);
+                                    };
+
+                                    document.addEventListener('mousemove', onMouseMove);
+                                    document.addEventListener('mouseup', onMouseUp);
+                                }}
+                            >
+                                <div className="flex justify-center min-w-max p-4">
                                     <div className="flex flex-col items-center gap-6">
                                         {tree.map((root) => (
                                             <MiniTreeNode key={root.id} member={root} />
