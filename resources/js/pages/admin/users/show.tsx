@@ -2,6 +2,7 @@ import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
     ArrowLeft,
     Check,
+    Eye,
     GitBranch,
     Mail,
     Plus,
@@ -38,6 +39,7 @@ type PageProps = {
 const roleOptions = [
     { value: 'superadmin', label: 'Superadmin', icon: ShieldCheck, color: 'text-purple-400' },
     { value: 'editor', label: 'Editor', icon: GitBranch, color: 'text-emerald-400' },
+    { value: 'viewer', label: 'Viewer', icon: Eye, color: 'text-cyan-400' },
     { value: 'pending', label: 'Pending', icon: UserIcon, color: 'text-amber-400' },
 ];
 
@@ -177,7 +179,9 @@ export default function UsersShow() {
                                                 ? 'bg-purple-500/10 text-purple-400 ring-purple-500/20'
                                                 : targetUser.role === 'editor'
                                                   ? 'bg-emerald-500/10 text-emerald-400 ring-emerald-500/20'
-                                                  : 'bg-amber-500/10 text-amber-400 ring-amber-500/20'
+                                                  : targetUser.role === 'viewer'
+                                                    ? 'bg-cyan-500/10 text-cyan-400 ring-cyan-500/20'
+                                                    : 'bg-amber-500/10 text-amber-400 ring-amber-500/20'
                                         }`}
                                     >
                                         <currentRole.icon className="h-3 w-3" />

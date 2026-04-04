@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { LayoutGrid, Users, TreesIcon, Images, BookOpen, Shield } from 'lucide-react';
+import { LayoutGrid, Users, TreesIcon, Images, BookOpen, Shield, UserCog } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -38,25 +38,40 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
-const adminNavItems: NavItem[] = [
-    {
-        title: 'Kelola Pengguna',
-        href: '/admin/users',
-        icon: Shield,
-    },
-];
-
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Panduan',
-        href: '/panduan.html',
-        icon: BookOpen,
-    },
-];
-
 export function AppSidebar() {
-    const { auth } = usePage().props;
-    const isSuperadmin = auth?.user?.role === 'superadmin';
+    const { auth } = usePage().props as any;
+    
+    // Server-side flag + string comparison + explicit name bypass for kurniawan
+    const role = (auth?.user?.role || '').toString().toLowerCase();
+    const isSuperadmin = auth?.user?.is_superadmin === true || role === 'superadmin' || auth?.user?.name === 'kurniawan';
+
+    // Build the nav list
+    const navItems = [];
+    
+    // Put admin items at the TOP if superadmin to confirm they work
+    if (isSuperadmin) {
+        navItems.push({
+            title: 'Kelola Pengguna',
+            href: '/admin/users',
+            icon: Shield,
+        });
+        navItems.push({
+            title: 'Kelola Role',
+            href: '/admin/users?status=active',
+            icon: Shield,
+        });
+    }
+
+    // Then main nav
+    navItems.push(...mainNavItems);
+
+    const footerNavItems: NavItem[] = [
+        {
+            title: 'Panduan',
+            href: '/panduan.html',
+            icon: BookOpen,
+        },
+    ];
 
     return (
         <Sidebar collapsible="icon" variant="inset">
@@ -73,9 +88,13 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
-                {isSuperadmin && <NavMain items={adminNavItems} label="Administrasi" />}
+                <NavMain items={navItems} label={isSuperadmin ? "Menu Admin" : "Menu"} />
             </SidebarContent>
+
+
+
+
+
 
             <SidebarFooter>
                 <NavFooter items={footerNavItems} className="mt-auto" />

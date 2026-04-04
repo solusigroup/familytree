@@ -24,6 +24,7 @@ class User extends Authenticatable
     // Role constants
     const ROLE_SUPERADMIN = 'superadmin';
     const ROLE_EDITOR = 'editor';
+    const ROLE_VIEWER = 'viewer';
     const ROLE_PENDING = 'pending';
 
     // Status constants
@@ -56,6 +57,11 @@ class User extends Authenticatable
     public function isEditor(): bool
     {
         return $this->role === self::ROLE_EDITOR;
+    }
+
+    public function isViewer(): bool
+    {
+        return $this->role === self::ROLE_VIEWER;
     }
 
     public function isPendingRole(): bool
@@ -111,7 +117,7 @@ class User extends Authenticatable
         }
 
         if (!$this->isEditor() || !$this->isActive()) {
-            return collect();
+            return collect(); // Viewer and pending users cannot manage any members
         }
 
         $branchRootIds = $this->assignedBranches()->pluck('family_members.id');

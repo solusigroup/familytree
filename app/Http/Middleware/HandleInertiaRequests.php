@@ -39,10 +39,12 @@ class HandleInertiaRequests extends Middleware
 
         $userData = null;
         if ($user) {
-            $userData = array_merge($user->toArray(), [
-                'role' => $user->role,
-                'status' => $user->status,
-            ]);
+            $userData = [
+                ...$user->toArray(),
+                'role' => (string) $user->role,
+                'status' => (string) $user->status,
+                'is_superadmin' => $user->isSuperadmin(),
+            ];
         }
 
         return [

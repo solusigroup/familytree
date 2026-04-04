@@ -1,4 +1,4 @@
-export type UserRole = 'superadmin' | 'editor' | 'pending';
+export type UserRole = 'superadmin' | 'editor' | 'viewer' | 'pending';
 export type UserStatus = 'active' | 'pending' | 'rejected';
 
 export type User = {

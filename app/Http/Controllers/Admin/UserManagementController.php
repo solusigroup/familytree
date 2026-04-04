@@ -67,13 +67,13 @@ class UserManagementController extends Controller
         }
 
         $user->update([
-            'role' => User::ROLE_EDITOR,
+            'role' => User::ROLE_VIEWER,
             'status' => User::STATUS_ACTIVE,
             'approved_at' => now(),
             'approved_by' => auth()->id(),
         ]);
 
-        return back()->with('success', "User \"{$user->name}\" berhasil disetujui sebagai Editor.");
+        return back()->with('success', "User \"{$user->name}\" berhasil disetujui sebagai Viewer.");
     }
 
     /**
@@ -98,7 +98,7 @@ class UserManagementController extends Controller
     public function updateRole(Request $request, User $user): RedirectResponse
     {
         $request->validate([
-            'role' => 'required|in:superadmin,editor,pending',
+            'role' => 'required|in:superadmin,editor,viewer,pending',
         ]);
 
         // Prevent demoting yourself

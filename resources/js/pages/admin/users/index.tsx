@@ -19,6 +19,7 @@ type PageProps = {
 const roleLabels: Record<string, { text: string; class: string }> = {
     superadmin: { text: 'Superadmin', class: 'bg-purple-500/10 text-purple-400 ring-purple-500/20' },
     editor: { text: 'Editor', class: 'bg-emerald-500/10 text-emerald-400 ring-emerald-500/20' },
+    viewer: { text: 'Viewer', class: 'bg-cyan-500/10 text-cyan-400 ring-cyan-500/20' },
     pending: { text: 'Pending', class: 'bg-amber-500/10 text-amber-400 ring-amber-500/20' },
 };
 
