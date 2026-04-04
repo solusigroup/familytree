@@ -38,24 +38,21 @@ class UserManagementController extends Controller
         ]);
     }
 
-    /**
-     * Display user details with branch assignments.
-     */
     public function show(User $user): Response
     {
-        $user->load(['branchAssignments.familyMember', 'assignedBranches']);
+        $user->load(['branchAssignments.familyMember']);
 
-        // Get all root-level family members for branch assignment dropdown
-        $familyMembers = FamilyMember::with('children')
-            ->orderBy('generation')
+        // Get all family members for branch assignment dropdown (flat list)
+        $familyMembers = FamilyMember::orderBy('generation')
             ->orderBy('name')
-            ->get(['id', 'name', 'generation', 'parent_id']);
+            ->get();
 
         return Inertia::render('admin/users/show', [
             'targetUser' => $user,
             'familyMembers' => $familyMembers,
         ]);
     }
+
 
     /**
      * Approve a pending user and set them as editor.
