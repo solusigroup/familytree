@@ -386,7 +386,7 @@ export default function Dashboard() {
                                     Aktivitas Terbaru
                                 </h3>
                                 <Link
-                                    href="/activity-logs"
+                                    href="/admin/activity-logs"
                                     className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
                                 >
                                     Lihat semua
@@ -458,7 +458,7 @@ export default function Dashboard() {
                             </div>
                         </Link>
                         <Link
-                            href="/activity-logs"
+                            href="/admin/activity-logs"
                             className="group flex items-center gap-4 rounded-xl border border-sidebar-border/70 p-5 transition-all duration-300 hover:border-sky-500/30 hover:bg-sky-500/5"
                         >
                             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-sky-500/10 transition-colors group-hover:bg-sky-500/20">

@@ -47,7 +47,7 @@ export function UserMenuContent({ user }: Props) {
                 <DropdownMenuItem asChild>
                     <Link
                         className="block w-full cursor-pointer"
-                        href="/activity-logs"
+                        href="/admin/activity-logs"
                         onClick={cleanup}
                     >
                         <ScrollText className="mr-2 h-4 w-4" />

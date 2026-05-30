@@ -31,7 +31,7 @@ interface ActivityLogsPageProps {
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Log Aktivitas', href: '/activity-logs' },
+    { title: 'Log Aktivitas', href: '/admin/activity-logs' },
 ];
 
 export default function ActivityLogs({ logs, pagination }: ActivityLogsPageProps) {
