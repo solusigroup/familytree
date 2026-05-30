@@ -97,7 +97,7 @@ class UserManagementController extends Controller
     public function updateRole(Request $request, User $user): RedirectResponse
     {
         $request->validate([
-            'role' => 'required|in:superadmin,editor,viewer,pending',
+            'role' => 'required|in:editor,viewer,pending',
         ]);
 
         // Prevent demoting yourself

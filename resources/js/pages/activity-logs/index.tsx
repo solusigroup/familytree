@@ -137,9 +137,16 @@ export default function ActivityLogs({ logs, pagination }: ActivityLogsPageProps
                             </div>
                             <div className="flex gap-1">
                                 {pagination.links.map((link, i) => {
+                                    const getLabel = (label: string) => {
+                                        if (label.includes('Sebelumnya') || label.includes('laquo')) return 'Prev';
+                                        if (label.includes('Berikutnya') || label.includes('raquo')) return 'Next';
+                                        return label;
+                                    };
+                                    const safeLabel = getLabel(link.label);
+                                    
                                     if (link.url === null) {
                                         return (
-                                            <div key={i} className="flex items-center justify-center p-2 text-sm text-muted-foreground opacity-50" dangerouslySetInnerHTML={{ __html: link.label.replace('&laquo; Sebelumnya', '<').replace('Berikutnya &raquo;', '>') }} />
+                                            <div key={i} className="flex items-center justify-center p-2 text-sm text-muted-foreground opacity-50">{safeLabel}</div>
                                         );
                                     }
                                     return (
@@ -148,8 +155,7 @@ export default function ActivityLogs({ logs, pagination }: ActivityLogsPageProps
                                             href={link.url}
                                             preserveScroll
                                             className={`flex items-center justify-center rounded-md px-3 py-1 text-sm transition-colors ${link.active ? 'bg-primary text-primary-foreground font-medium shadow' : 'hover:bg-muted text-muted-foreground hover:text-foreground'}`}
-                                            dangerouslySetInnerHTML={{ __html: link.label.replace('&laquo; Sebelumnya', 'Prev').replace('Berikutnya &raquo;', 'Next') }}
-                                        />
+                                        >{safeLabel}</Link>
                                     );
                                 })}
                             </div>

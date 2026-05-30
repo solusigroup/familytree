@@ -226,6 +226,11 @@ class FamilyMemberController extends Controller
     {
         $this->authorize('delete', $familyMember);
 
+        // Prevent deletion if member has children
+        if ($familyMember->children()->exists()) {
+            return back()->with('error', 'Tidak dapat menghapus anggota yang masih memiliki anak. Hapus atau pindahkan anak-anaknya terlebih dahulu.');
+        }
+
         // Delete photo if exists
         if ($familyMember->photo) {
             Storage::disk('public')->delete($familyMember->photo);

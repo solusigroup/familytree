@@ -20,18 +20,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // Authenticated + verified + approved routes
 Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
     Route::get('gallery', [FamilyMemberController::class, 'gallery'])->name('gallery');
     Route::resource('family-members', FamilyMemberController::class);
     Route::get('family-tree', [FamilyMemberController::class, 'tree'])->name('family-tree');
 });
 
 // Admin routes (superadmin only)
-Route::middleware(['auth', 'verified', 'approved', 'superadmin'])
+Route::middleware(['auth', 'verified', 'approved', 'superadmin', 'throttle:60,1'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
         Route::get('users', [UserManagementController::class, 'index'])->name('users.index');
+        Route::get('activity-logs', [\App\Http\Controllers\ActivityLogController::class, 'index'])->name('activity-logs.index');
         Route::get('users/{user}', [UserManagementController::class, 'show'])->name('users.show');
         Route::post('users/{user}/approve', [UserManagementController::class, 'approve'])->name('users.approve');
         Route::post('users/{user}/reject', [UserManagementController::class, 'reject'])->name('users.reject');

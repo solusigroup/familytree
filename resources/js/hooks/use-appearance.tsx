@@ -26,7 +26,7 @@ const setCookie = (name: string, value: string, days = 365): void => {
     }
 
     const maxAge = days * 24 * 60 * 60;
-    document.cookie = `${name}=${value};path=/;max-age=${maxAge};SameSite=Lax`;
+    document.cookie = `${name}=${value};path=/;max-age=${maxAge};SameSite=Lax;Secure`;
 };
 
 const getStoredAppearance = (): Appearance => {

@@ -15,10 +15,10 @@ class DatabaseSeeder extends Seeder
     {
         // Create superadmin user
         User::firstOrCreate(
-            ['email' => 'kurniawan@petalmail.com'],
+            ['email' => env('ADMIN_EMAIL', 'admin@example.com')],
             [
-                'name' => 'kurniawan',
-                'password' => bcrypt('5@8@12Yaa'),
+                'name' => env('ADMIN_NAME', 'admin'),
+                'password' => bcrypt(env('ADMIN_PASSWORD', 'ChangeMe!SecureP@ss123')),
                 'email_verified_at' => now(),
                 'role' => 'superadmin',
                 'status' => 'active',

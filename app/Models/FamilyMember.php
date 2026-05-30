@@ -118,18 +118,23 @@ class FamilyMember extends Model
     }
 
     /**
-     * Get all descendant IDs recursively.
+     * Get all descendant IDs using a single recursive CTE query.
+     * This avoids the N+1 query problem of the previous recursive PHP approach.
      *
      * @return \Illuminate\Support\Collection<int, int>
      */
     public function getAllDescendantIds(): \Illuminate\Support\Collection
     {
-        $ids = collect();
-        foreach ($this->children as $child) {
-            $ids->push($child->id);
-            $ids = $ids->merge($child->getAllDescendantIds());
-        }
-        return $ids;
+        return \Illuminate\Support\Facades\DB::table(
+            \Illuminate\Support\Facades\DB::raw(
+                '(WITH RECURSIVE descendants AS (
+                    SELECT id FROM family_members WHERE parent_id = ?
+                    UNION ALL
+                    SELECT fm.id FROM family_members fm
+                    INNER JOIN descendants d ON fm.parent_id = d.id
+                ) SELECT id FROM descendants) AS descendant_ids'
+            )
+        )->setBindings([$this->id])->pluck('id');
     }
 
     /**

@@ -41,14 +41,13 @@ const mainNavItems: NavItem[] = [
 export function AppSidebar() {
     const { auth } = usePage().props as any;
     
-    // Server-side flag + string comparison + explicit name bypass for kurniawan
-    const role = (auth?.user?.role || '').toString().toLowerCase();
-    const isSuperadmin = auth?.user?.is_superadmin === true || role === 'superadmin' || auth?.user?.name === 'kurniawan';
+    // Check superadmin status from server-side flag
+    const isSuperadmin = auth?.user?.is_superadmin === true;
 
     // Build the nav list
     const navItems = [];
     
-    // Put admin items at the TOP if superadmin to confirm they work
+    // Show admin menu items for superadmin users
     if (isSuperadmin) {
         navItems.push({
             title: 'Kelola Pengguna',

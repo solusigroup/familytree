@@ -10,9 +10,14 @@ class ActivityLogController extends Controller
 {
     /**
      * Display a listing of the resource.
+     * Only superadmin can view activity logs.
      */
     public function index(): Response
     {
+        if (!auth()->user()->isSuperadmin()) {
+            abort(403, 'Hanya superadmin yang boleh mengakses log aktivitas.');
+        }
+
         $logs = Activity::with(['causer', 'subject'])
             ->latest()
             ->paginate(15);
