@@ -1,72 +1,11 @@
 import { Head, Link, usePage } from '@inertiajs/react';
-import { TreesIcon, Users, Layers, LogIn, UserPlus, ChevronDown, Heart, BookOpen } from 'lucide-react';
-import type { FamilyMember, FamilyTreeStats } from '@/types';
+import { TreesIcon, Users, Layers, LogIn, UserPlus, ChevronDown, BookOpen } from 'lucide-react';
+import type { FamilyTreeStats } from '@/types';
 
 type WelcomeProps = {
-    tree: FamilyMember[];
     stats: FamilyTreeStats;
 };
 
-function MiniTreeNode({ member, depth = 0 }: { member: FamilyMember; depth?: number }) {
-    const hasChildren = member.children_recursive && member.children_recursive.length > 0;
-
-    return (
-        <div className="flex flex-col items-center">
-            <div
-                className={`relative rounded-xl border px-4 py-2 text-center transition-all duration-300 hover:scale-105 ${depth === 0
-                    ? 'border-amber-400/50 bg-gradient-to-br from-amber-500/20 to-orange-500/20 shadow-lg shadow-amber-500/10'
-                    : depth === 1
-                        ? 'border-emerald-400/40 bg-gradient-to-br from-emerald-500/15 to-teal-500/15'
-                        : 'border-sky-400/30 bg-gradient-to-br from-sky-500/10 to-blue-500/10'
-                    }`}
-            >
-                <div
-                    className={`mx-auto mb-1 flex h-8 w-8 overflow-hidden items-center justify-center rounded-full text-xs font-bold text-white ${
-                        member.photo ? 'bg-transparent ring-1 ring-white/20' : (member.gender === 'male'
-                            ? 'bg-gradient-to-br from-sky-500/40 to-blue-600/40'
-                            : 'bg-gradient-to-br from-pink-500/40 to-rose-600/40')
-                    }`}
-                >
-                    {member.photo ? (
-                        <img 
-                            src={`/storage/${member.photo}`} 
-                            alt={member.name} 
-                            className="h-full w-full object-cover"
-                            onError={(e) => {
-                                (e.target as HTMLImageElement).style.display = 'none';
-                                if (e.currentTarget.parentElement) {
-                                    e.currentTarget.parentElement.innerText = member.name.charAt(0);
-                                }
-                            }}
-                        />
-                    ) : (
-                        member.name.charAt(0)
-                    )}
-                </div>
-                <p className="text-sm font-semibold text-white">{member.name}</p>
-                {member.spouses && member.spouses.length > 0 && (
-                    <div className="flex flex-col gap-0.5 mt-1">
-                        {member.spouses.map(spouse => (
-                            <p key={spouse.id} className="flex items-center justify-center gap-1 text-[10px] text-white/70">
-                                <Heart className="h-2.5 w-2.5 text-pink-400" /> {spouse.name}
-                            </p>
-                        ))}
-                    </div>
-                )}
-            </div>
-            {hasChildren && (
-                <div className="flex flex-col items-center">
-                    <div className="h-6 w-px bg-gradient-to-b from-white/30 to-white/10" />
-                    <div className="flex gap-4">
-                        {member.children_recursive!.map((child) => (
-                            <MiniTreeNode key={child.id} member={child} depth={depth + 1} />
-                        ))}
-                    </div>
-                </div>
-            )}
-        </div>
-    );
-}
 
 function StatCard({ icon: Icon, label, value }: { icon: React.ElementType; label: string; value: number | string }) {
     return (
@@ -82,7 +21,7 @@ function StatCard({ icon: Icon, label, value }: { icon: React.ElementType; label
 }
 
 export default function Welcome() {
-    const { tree, stats } = usePage<{ tree: FamilyMember[]; stats: FamilyTreeStats }>().props;
+    const { stats } = usePage<{ stats: FamilyTreeStats }>().props;
     const { auth } = usePage<{ auth?: { user?: { id: number } } }>().props;
     const isLoggedIn = !!auth?.user;
 
@@ -218,47 +157,29 @@ export default function Welcome() {
                     </div>
                 </section>
 
-                {/* Tree Preview Section */}
-                {tree.length > 0 && (
+                {/* CTA Section - Login to see full tree */}
+                {!isLoggedIn && (
                     <section className="relative z-10 px-6 py-16">
-                        <div className="mx-auto max-w-5xl">
-                            <div className="mb-10 text-center">
-                                <h2 className="mb-3 text-3xl font-bold text-white">Pohon Keluarga</h2>
-                                <p className="text-white/50">Visualisasi silsilah dari generasi pertama</p>
-                            </div>
-                            <div 
-                                className="group relative overflow-auto rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm cursor-grab active:cursor-grabbing max-h-[700px]"
-                                onMouseDown={(e) => {
-                                    const ele = e.currentTarget;
-                                    const startPos = {
-                                        left: ele.scrollLeft,
-                                        top: ele.scrollTop,
-                                        x: e.clientX,
-                                        y: e.clientY,
-                                    };
-
-                                    const onMouseMove = (e: MouseEvent) => {
-                                        const dx = e.clientX - startPos.x;
-                                        const dy = e.clientY - startPos.y;
-                                        ele.scrollTop = startPos.top - dy;
-                                        ele.scrollLeft = startPos.left - dx;
-                                    };
-
-                                    const onMouseUp = () => {
-                                        document.removeEventListener('mousemove', onMouseMove);
-                                        document.removeEventListener('mouseup', onMouseUp);
-                                    };
-
-                                    document.addEventListener('mousemove', onMouseMove);
-                                    document.addEventListener('mouseup', onMouseUp);
-                                }}
-                            >
-                                <div className="flex justify-center min-w-max p-4">
-                                    <div className="flex flex-col items-center gap-6">
-                                        {tree.map((root) => (
-                                            <MiniTreeNode key={root.id} member={root} />
-                                        ))}
-                                    </div>
+                        <div className="mx-auto max-w-3xl text-center">
+                            <div className="rounded-3xl border border-white/10 bg-white/5 p-10 backdrop-blur-sm">
+                                <TreesIcon className="mx-auto mb-4 h-12 w-12 text-amber-400" />
+                                <h2 className="mb-3 text-3xl font-bold text-white">Lihat Pohon Keluarga</h2>
+                                <p className="mb-6 text-white/50">Masuk atau daftar untuk melihat silsilah lengkap keluarga besar Bani Ali Dahlan.</p>
+                                <div className="flex items-center justify-center gap-4">
+                                    <Link
+                                        href="/login"
+                                        className="inline-flex items-center gap-2 rounded-2xl border border-white/10 px-8 py-3 text-base font-medium text-white/80 transition-all hover:border-white/20 hover:bg-white/5 hover:text-white"
+                                    >
+                                        <LogIn className="h-5 w-5" />
+                                        Masuk
+                                    </Link>
+                                    <Link
+                                        href="/register"
+                                        className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-3 text-base font-semibold text-white shadow-lg shadow-amber-500/25 transition-all duration-300 hover:shadow-amber-500/40"
+                                    >
+                                        <UserPlus className="h-5 w-5" />
+                                        Daftar
+                                    </Link>
                                 </div>
                             </div>
                         </div>

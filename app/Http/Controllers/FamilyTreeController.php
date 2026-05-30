@@ -8,16 +8,15 @@ use Inertia\Inertia;
 class FamilyTreeController extends Controller
 {
     /**
-     * Display the public landing page with family tree preview.
+     * Display the public landing page.
+     * Only aggregate stats are shared publicly — no personal family data.
      */
     public function index()
     {
-        $tree = FamilyMember::getTree();
         $totalMembers = FamilyMember::count();
         $totalGenerations = FamilyMember::max('generation') ?? 0;
 
         return Inertia::render('welcome', [
-            'tree' => $tree,
             'stats' => [
                 'totalMembers' => $totalMembers,
                 'totalGenerations' => $totalGenerations,
@@ -25,3 +24,4 @@ class FamilyTreeController extends Controller
         ]);
     }
 }
+
