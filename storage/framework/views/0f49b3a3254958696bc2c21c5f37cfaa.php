@@ -32,9 +32,27 @@
 
         <title inertia><?php echo e(config('app.name', 'Laravel')); ?></title>
 
+        
+        <link rel="manifest" href="/manifest.webmanifest">
+        <meta name="theme-color" content="#f59e0b" media="(prefers-color-scheme: light)">
+        <meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)">
+
+        
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="apple-mobile-web-app-title" content="<?php echo e(config('app.name', 'Dinasti Nasrukhan')); ?>">
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180x180.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png">
+
+        
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="application-name" content="<?php echo e(config('app.name', 'Dinasti Nasrukhan')); ?>">
+
         <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+        <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
 
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
