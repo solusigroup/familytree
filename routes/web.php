@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\Admin\UserManagementController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FamilyMemberController;
 use App\Http\Controllers\FamilyTreeController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\PendingApprovalController;
+use App\Http\Controllers\PhotoMosaicController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -23,6 +25,23 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     Route::get('gallery', [FamilyMemberController::class, 'gallery'])->name('gallery');
     Route::resource('family-members', FamilyMemberController::class);
     Route::get('family-tree', [FamilyMemberController::class, 'tree'])->name('family-tree');
+    
+    // Mozaik Foto (viewing accessible to all approved users)
+    Route::get('mosaic', [PhotoMosaicController::class, 'index'])->name('mosaic.index');
+});
+
+// Routes restricted to users with role at least editor (Editor & Superadmin)
+Route::middleware(['auth', 'verified', 'approved', 'min_editor'])->group(function () {
+    // Chat internal editor & superadmin
+    Route::get('chat', [ChatController::class, 'index'])->name('chat.index');
+    Route::get('chat/messages', [ChatController::class, 'fetchMessages'])->name('chat.messages');
+    Route::post('chat', [ChatController::class, 'store'])->name('chat.store');
+    Route::delete('chat/{chatMessage}', [ChatController::class, 'destroy'])->name('chat.destroy');
+
+    // Entry & management of Mozaik Foto by editors
+    Route::post('mosaic', [PhotoMosaicController::class, 'store'])->name('mosaic.store');
+    Route::put('mosaic/{photoMosaic}', [PhotoMosaicController::class, 'update'])->name('mosaic.update');
+    Route::delete('mosaic/{photoMosaic}', [PhotoMosaicController::class, 'destroy'])->name('mosaic.destroy');
 });
 
 // Admin routes (superadmin only)
@@ -31,11 +50,12 @@ Route::middleware(['auth', 'verified', 'approved', 'superadmin', 'throttle:60,1'
     ->name('admin.')
     ->group(function () {
         Route::get('users', [UserManagementController::class, 'index'])->name('users.index');
-        Route::get('activity-logs', [\App\Http\Controllers\ActivityLogController::class, 'index'])->name('activity-logs.index');
+        Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
         Route::get('users/{user}', [UserManagementController::class, 'show'])->name('users.show');
         Route::post('users/{user}/approve', [UserManagementController::class, 'approve'])->name('users.approve');
         Route::post('users/{user}/reject', [UserManagementController::class, 'reject'])->name('users.reject');
         Route::put('users/{user}/role', [UserManagementController::class, 'updateRole'])->name('users.update-role');
+        Route::post('users/{user}/reset-password', [UserManagementController::class, 'resetPassword'])->name('users.reset-password');
         Route::post('users/{user}/assign-branch', [UserManagementController::class, 'assignBranch'])->name('users.assign-branch');
         Route::delete('users/{user}/remove-branch', [UserManagementController::class, 'removeBranch'])->name('users.remove-branch');
         Route::delete('users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');

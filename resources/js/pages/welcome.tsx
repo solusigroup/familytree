@@ -1,6 +1,8 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { TreesIcon, Users, Layers, LogIn, UserPlus, ChevronRight, BookOpen, ShieldCheck, Image, Network, Heart, Sparkles } from 'lucide-react';
 import type { FamilyTreeStats } from '@/types';
+import { PwaInstallButton } from '@/components/pwa-install-button';
+import { PwaInstallBanner } from '@/components/pwa-install-banner';
 
 type WelcomeProps = {
     stats: FamilyTreeStats;
@@ -66,6 +68,7 @@ export default function Welcome() {
                             </div>
                         </div>
                         <div className="flex items-center gap-3">
+                            <PwaInstallButton variant="header" />
                             <a
                                 href="/panduan.html"
                                 target="_blank"
@@ -247,6 +250,8 @@ export default function Welcome() {
                         </p>
                     </div>
                 </footer>
+
+                <PwaInstallBanner />
             </div>
         </>
     );

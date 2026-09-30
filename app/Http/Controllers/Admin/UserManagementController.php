@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\UserBranchAssignment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -172,5 +173,28 @@ class UserManagementController extends Controller
 
         return redirect()->route('admin.users.index')
             ->with('success', "User \"{$user->name}\" berhasil dihapus.");
+    }
+
+    /**
+     * Reset password of a user by superadmin.
+     */
+    public function resetPassword(Request $request, User $user): RedirectResponse
+    {
+        $request->validate([
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        if (function_exists('activity')) {
+            activity()
+                ->causedBy(auth()->user())
+                ->performedOn($user)
+                ->log("Superadmin mereset password user {$user->name}");
+        }
+
+        return back()->with('success', "Password untuk user \"{$user->name}\" berhasil di-reset.");
     }
 }

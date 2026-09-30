@@ -57,4 +57,40 @@ class UserFactory extends Factory
             'two_factor_confirmed_at' => now(),
         ]);
     }
+
+    public function superadmin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => User::ROLE_SUPERADMIN,
+            'status' => User::STATUS_ACTIVE,
+            'approved_at' => now(),
+        ]);
+    }
+
+    public function editor(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => User::ROLE_EDITOR,
+            'status' => User::STATUS_ACTIVE,
+            'approved_at' => now(),
+        ]);
+    }
+
+    public function viewer(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => User::ROLE_VIEWER,
+            'status' => User::STATUS_ACTIVE,
+            'approved_at' => now(),
+        ]);
+    }
+
+    public function pending(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => User::ROLE_PENDING,
+            'status' => User::STATUS_PENDING,
+            'approved_at' => null,
+        ]);
+    }
 }

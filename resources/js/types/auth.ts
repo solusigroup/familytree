@@ -15,6 +15,10 @@ export type User = {
     created_at: string;
     updated_at: string;
     branch_assignments_count?: number;
+    is_superadmin?: boolean;
+    is_editor?: boolean;
+    is_editor_or_above?: boolean;
+    can_chat?: boolean;
     [key: string]: unknown;
 };
 

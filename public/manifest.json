@@ -1,0 +1,101 @@
+{
+  "id": "/?source=pwa",
+  "name": "Dinasti Nasrukhan - Silsilah Keluarga",
+  "short_name": "Nasrukhan",
+  "description": "Aplikasi Silsilah Keluarga Besar Bani Ali Dahlan (Dinasti Nasrukhan)",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui", "window-controls-overlay"],
+  "orientation": "portrait-primary",
+  "background_color": "#020617",
+  "theme_color": "#f59e0b",
+  "lang": "id",
+  "dir": "ltr",
+  "categories": ["lifestyle", "family", "social"],
+  "icons": [
+    {
+      "src": "/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Bagan Silsilah",
+      "short_name": "Silsilah",
+      "description": "Buka bagan pohon silsilah keluarga",
+      "url": "/family-tree?source=pwa_shortcut",
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Galeri Foto",
+      "short_name": "Galeri",
+      "description": "Lihat galeri foto keluarga",
+      "url": "/gallery?source=pwa_shortcut",
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Buku Panduan",
+      "short_name": "Panduan",
+      "description": "Buku panduan penggunaan aplikasi",
+      "url": "/panduan.html",
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
+    }
+  ]
+}

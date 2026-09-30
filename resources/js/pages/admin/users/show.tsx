@@ -4,6 +4,7 @@ import {
     Check,
     Eye,
     GitBranch,
+    KeyRound,
     Mail,
     Plus,
     Shield,
@@ -14,6 +15,7 @@ import {
     X,
 } from 'lucide-react';
 import { useState } from 'react';
+import ResetPasswordModal from '@/components/reset-password-modal';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem, FamilyMember, User } from '@/types';
 
@@ -54,6 +56,7 @@ export default function UsersShow() {
     const [selectedBranch, setSelectedBranch] = useState('');
     const [searchBranch, setSearchBranch] = useState('');
     const [showRoleModal, setShowRoleModal] = useState(false);
+    const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
     const [newRole, setNewRole] = useState(targetUser.role);
 
     const breadcrumbs: BreadcrumbItem[] = [
@@ -209,6 +212,18 @@ export default function UsersShow() {
                                             <span className="text-foreground">{formatDate(targetUser.approved_at)}</span>
                                         </div>
                                     )}
+                                </div>
+
+                                {/* Reset Password Button */}
+                                <div className="border-t border-sidebar-border/50 pt-3">
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowResetPasswordModal(true)}
+                                        className="flex w-full items-center justify-center gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-2.5 text-sm font-semibold text-amber-500 transition-colors hover:bg-amber-500/20"
+                                    >
+                                        <KeyRound className="h-4 w-4" />
+                                        Reset Password Pengguna
+                                    </button>
                                 </div>
 
                                 {/* Pending Actions */}
@@ -384,6 +399,13 @@ export default function UsersShow() {
                         </div>
                     </div>
                 )}
+
+                {/* Reset Password Modal */}
+                <ResetPasswordModal
+                    user={targetUser}
+                    isOpen={showResetPasswordModal}
+                    onClose={() => setShowResetPasswordModal(false)}
+                />
             </div>
         </AppLayout>
     );

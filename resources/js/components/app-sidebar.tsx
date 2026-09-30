@@ -1,9 +1,10 @@
 import { Link, usePage } from '@inertiajs/react';
-import { LayoutGrid, Users, TreesIcon, Images, BookOpen, Shield, UserCog } from 'lucide-react';
+import { LayoutGrid, Users, TreesIcon, Images, BookOpen, Shield, UserCog, Grid3X3, MessagesSquare } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
+import { PwaInstallButton } from '@/components/pwa-install-button';
 import {
     Sidebar,
     SidebarContent,
@@ -27,6 +28,11 @@ const mainNavItems: NavItem[] = [
         icon: Images,
     },
     {
+        title: 'Mozaik Foto',
+        href: '/mosaic',
+        icon: Grid3X3,
+    },
+    {
         title: 'Anggota Keluarga',
         href: '/family-members',
         icon: Users,
@@ -43,6 +49,7 @@ export function AppSidebar() {
     
     // Check superadmin status from server-side flag
     const isSuperadmin = auth?.user?.is_superadmin === true;
+    const canChat = auth?.user?.can_chat === true || isSuperadmin || auth?.user?.role === 'editor';
 
     // Build the nav list
     const navItems = [];
@@ -58,6 +65,15 @@ export function AppSidebar() {
             title: 'Kelola Role',
             href: '/admin/users?status=active',
             icon: Shield,
+        });
+    }
+
+    // Chat for min. role editor (Editor & Superadmin)
+    if (canChat) {
+        navItems.push({
+            title: 'Chat Tim',
+            href: '/chat',
+            icon: MessagesSquare,
         });
     }
 
@@ -96,6 +112,9 @@ export function AppSidebar() {
 
 
             <SidebarFooter>
+                <div className="px-2 pt-1 group-data-[collapsible=icon]:hidden">
+                    <PwaInstallButton variant="sidebar" />
+                </div>
                 <NavFooter items={footerNavItems} className="mt-auto" />
                 <NavUser />
             </SidebarFooter>

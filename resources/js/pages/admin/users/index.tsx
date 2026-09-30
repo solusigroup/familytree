@@ -1,6 +1,7 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Check, Eye, Search, Shield, ShieldCheck, ShieldX, Trash2, Users, X } from 'lucide-react';
+import { Check, Eye, KeyRound, Search, Shield, ShieldCheck, ShieldX, Trash2, Users, X } from 'lucide-react';
 import { useState } from 'react';
+import ResetPasswordModal from '@/components/reset-password-modal';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem, User } from '@/types';
 
@@ -39,6 +40,7 @@ const filterTabs = [
 export default function UsersIndex() {
     const { users, pendingCount, currentFilter, flash } = usePage<PageProps>().props;
     const [search, setSearch] = useState('');
+    const [resetTargetUser, setResetTargetUser] = useState<User | null>(null);
 
     const filteredUsers = users.filter(
         (u) =>
@@ -213,6 +215,13 @@ export default function UsersIndex() {
                                                         >
                                                             <Eye className="h-4 w-4" />
                                                         </Link>
+                                                        <button
+                                                            onClick={() => setResetTargetUser(user)}
+                                                            className="rounded-lg p-2 text-muted-foreground transition-colors hover:bg-amber-500/10 hover:text-amber-400"
+                                                            title="Reset Password"
+                                                        >
+                                                            <KeyRound className="h-4 w-4" />
+                                                        </button>
                                                         {user.status === 'pending' && (
                                                             <>
                                                                 <button
@@ -251,6 +260,13 @@ export default function UsersIndex() {
                     </div>
                 </div>
             </div>
+
+            {/* Reset Password Modal */}
+            <ResetPasswordModal
+                user={resetTargetUser}
+                isOpen={!!resetTargetUser}
+                onClose={() => setResetTargetUser(null)}
+            />
         </AppLayout>
     );
 }

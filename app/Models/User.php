@@ -69,6 +69,11 @@ class User extends Authenticatable
         return $this->role === self::ROLE_PENDING;
     }
 
+    public function isEditorOrAbove(): bool
+    {
+        return ($this->isSuperadmin() || $this->isEditor()) && $this->isActive();
+    }
+
     public function isActive(): bool
     {
         return $this->status === self::STATUS_ACTIVE;
@@ -102,6 +107,22 @@ class User extends Authenticatable
         return $this->belongsToMany(FamilyMember::class, 'user_branch_assignments')
             ->withPivot('assigned_by')
             ->withTimestamps();
+    }
+
+    /**
+     * Chat messages sent by this user.
+     */
+    public function chatMessages(): HasMany
+    {
+        return $this->hasMany(ChatMessage::class);
+    }
+
+    /**
+     * Photo mosaics uploaded by this user.
+     */
+    public function photoMosaics(): HasMany
+    {
+        return $this->hasMany(PhotoMosaic::class);
     }
 
     // ── Authorization helpers ────────────────────────────────

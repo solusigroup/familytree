@@ -25,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'approved' => \App\Http\Middleware\EnsureUserApproved::class,
             'superadmin' => \App\Http\Middleware\EnsureSuperadmin::class,
+            'min_editor' => \App\Http\Middleware\EnsureMinEditor::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
