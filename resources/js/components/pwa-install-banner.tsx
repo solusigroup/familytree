@@ -52,7 +52,7 @@ export function PwaInstallBanner() {
 
                     <div className="flex-1 min-w-0">
                         <h4 className="text-sm font-bold text-white truncate">
-                            Pasang Dinasti Nasrukhan
+                            Pasang Bani Ali Dahlan
                         </h4>
                         <p className="text-xs text-white/70 line-clamp-1">
                             {isIosSafari

@@ -1,5 +1,5 @@
-// Progressive Web App Service Worker for Dinasti Nasrukhan
-const CACHE_NAME = 'dinasti-nasrukhan-v1';
+// Progressive Web App Service Worker for Bani Ali Dahlan
+const CACHE_NAME = 'bani-ali-dahlan-v1';
 const OFFLINE_URL = '/offline.html';
 
 // Assets to precache immediately

@@ -44,7 +44,7 @@ export function PwaInstallDialog({
                                 </span>
                             </DialogTitle>
                             <DialogDescription className="text-xs text-white/60">
-                                Dinasti Nasrukhan — Silsilah Keluarga Besar
+                                Bani Ali Dahlan — Silsilah Keluarga Besar
                             </DialogDescription>
                         </div>
                     </div>
@@ -141,7 +141,7 @@ export function PwaInstallDialog({
                                     className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-3 font-bold text-slate-950 shadow-lg shadow-amber-500/25 transition hover:shadow-amber-500/40 hover:scale-[1.02]"
                                 >
                                     <TreesIcon className="size-4" />
-                                    Install Dinasti Nasrukhan Sekarang
+                                    Install Bani Ali Dahlan Sekarang
                                 </button>
                             </div>
                         ) : (

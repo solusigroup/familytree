@@ -293,7 +293,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
  * @see app/Http/Controllers/FamilyMemberController.php:112
  * @route '/family-members/{family_member}'
  */
-export const show = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -308,11 +308,14 @@ show.definition = {
  * @see app/Http/Controllers/FamilyMemberController.php:112
  * @route '/family-members/{family_member}'
  */
-show.url = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions) => {
+show.url = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { family_member: args }
     }
 
+            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+            args = { family_member: args.id }
+        }
     
     if (Array.isArray(args)) {
         args = {
@@ -323,7 +326,9 @@ show.url = (args: { family_member: string | number } | [family_member: string | 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        family_member: args.family_member,
+                        family_member: typeof args.family_member === 'object'
+                ? args.family_member.id
+                : args.family_member,
                 }
 
     return show.definition.url
@@ -336,7 +341,7 @@ show.url = (args: { family_member: string | number } | [family_member: string | 
  * @see app/Http/Controllers/FamilyMemberController.php:112
  * @route '/family-members/{family_member}'
  */
-show.get = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -345,7 +350,7 @@ show.get = (args: { family_member: string | number } | [family_member: string | 
  * @see app/Http/Controllers/FamilyMemberController.php:112
  * @route '/family-members/{family_member}'
  */
-show.head = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
@@ -355,7 +360,7 @@ show.head = (args: { family_member: string | number } | [family_member: string |
  * @see app/Http/Controllers/FamilyMemberController.php:112
  * @route '/family-members/{family_member}'
  */
-    const showForm = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const showForm = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: show.url(args, options),
         method: 'get',
     })
@@ -365,7 +370,7 @@ show.head = (args: { family_member: string | number } | [family_member: string |
  * @see app/Http/Controllers/FamilyMemberController.php:112
  * @route '/family-members/{family_member}'
  */
-        showForm.get = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.get = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, options),
             method: 'get',
         })
@@ -374,7 +379,7 @@ show.head = (args: { family_member: string | number } | [family_member: string |
  * @see app/Http/Controllers/FamilyMemberController.php:112
  * @route '/family-members/{family_member}'
  */
-        showForm.head = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        showForm.head = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: show.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -390,7 +395,7 @@ show.head = (args: { family_member: string | number } | [family_member: string |
  * @see app/Http/Controllers/FamilyMemberController.php:124
  * @route '/family-members/{family_member}/edit'
  */
-export const edit = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const edit = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
@@ -405,11 +410,14 @@ edit.definition = {
  * @see app/Http/Controllers/FamilyMemberController.php:124
  * @route '/family-members/{family_member}/edit'
  */
-edit.url = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions) => {
+edit.url = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { family_member: args }
     }
 
+            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+            args = { family_member: args.id }
+        }
     
     if (Array.isArray(args)) {
         args = {
@@ -420,7 +428,9 @@ edit.url = (args: { family_member: string | number } | [family_member: string | 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        family_member: args.family_member,
+                        family_member: typeof args.family_member === 'object'
+                ? args.family_member.id
+                : args.family_member,
                 }
 
     return edit.definition.url
@@ -433,7 +443,7 @@ edit.url = (args: { family_member: string | number } | [family_member: string | 
  * @see app/Http/Controllers/FamilyMemberController.php:124
  * @route '/family-members/{family_member}/edit'
  */
-edit.get = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+edit.get = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: edit.url(args, options),
     method: 'get',
 })
@@ -442,7 +452,7 @@ edit.get = (args: { family_member: string | number } | [family_member: string | 
  * @see app/Http/Controllers/FamilyMemberController.php:124
  * @route '/family-members/{family_member}/edit'
  */
-edit.head = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+edit.head = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: edit.url(args, options),
     method: 'head',
 })
@@ -452,7 +462,7 @@ edit.head = (args: { family_member: string | number } | [family_member: string |
  * @see app/Http/Controllers/FamilyMemberController.php:124
  * @route '/family-members/{family_member}/edit'
  */
-    const editForm = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    const editForm = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
         action: edit.url(args, options),
         method: 'get',
     })
@@ -462,7 +472,7 @@ edit.head = (args: { family_member: string | number } | [family_member: string |
  * @see app/Http/Controllers/FamilyMemberController.php:124
  * @route '/family-members/{family_member}/edit'
  */
-        editForm.get = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        editForm.get = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: edit.url(args, options),
             method: 'get',
         })
@@ -471,7 +481,7 @@ edit.head = (args: { family_member: string | number } | [family_member: string |
  * @see app/Http/Controllers/FamilyMemberController.php:124
  * @route '/family-members/{family_member}/edit'
  */
-        editForm.head = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+        editForm.head = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
             action: edit.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'HEAD',
@@ -487,7 +497,7 @@ edit.head = (args: { family_member: string | number } | [family_member: string |
  * @see app/Http/Controllers/FamilyMemberController.php:154
  * @route '/family-members/{family_member}'
  */
-export const update = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -502,11 +512,14 @@ update.definition = {
  * @see app/Http/Controllers/FamilyMemberController.php:154
  * @route '/family-members/{family_member}'
  */
-update.url = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions) => {
+update.url = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { family_member: args }
     }
 
+            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+            args = { family_member: args.id }
+        }
     
     if (Array.isArray(args)) {
         args = {
@@ -517,7 +530,9 @@ update.url = (args: { family_member: string | number } | [family_member: string 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        family_member: args.family_member,
+                        family_member: typeof args.family_member === 'object'
+                ? args.family_member.id
+                : args.family_member,
                 }
 
     return update.definition.url
@@ -530,7 +545,7 @@ update.url = (args: { family_member: string | number } | [family_member: string 
  * @see app/Http/Controllers/FamilyMemberController.php:154
  * @route '/family-members/{family_member}'
  */
-update.put = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -539,7 +554,7 @@ update.put = (args: { family_member: string | number } | [family_member: string 
  * @see app/Http/Controllers/FamilyMemberController.php:154
  * @route '/family-members/{family_member}'
  */
-update.patch = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
+update.patch = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
@@ -549,7 +564,7 @@ update.patch = (args: { family_member: string | number } | [family_member: strin
  * @see app/Http/Controllers/FamilyMemberController.php:154
  * @route '/family-members/{family_member}'
  */
-    const updateForm = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const updateForm = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: update.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'PUT',
@@ -564,7 +579,7 @@ update.patch = (args: { family_member: string | number } | [family_member: strin
  * @see app/Http/Controllers/FamilyMemberController.php:154
  * @route '/family-members/{family_member}'
  */
-        updateForm.put = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.put = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PUT',
@@ -578,7 +593,7 @@ update.patch = (args: { family_member: string | number } | [family_member: strin
  * @see app/Http/Controllers/FamilyMemberController.php:154
  * @route '/family-members/{family_member}'
  */
-        updateForm.patch = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        updateForm.patch = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: update.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'PATCH',
@@ -594,7 +609,7 @@ update.patch = (args: { family_member: string | number } | [family_member: strin
  * @see app/Http/Controllers/FamilyMemberController.php:232
  * @route '/family-members/{family_member}'
  */
-export const destroy = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -609,11 +624,14 @@ destroy.definition = {
  * @see app/Http/Controllers/FamilyMemberController.php:232
  * @route '/family-members/{family_member}'
  */
-destroy.url = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions) => {
+destroy.url = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { family_member: args }
     }
 
+            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+            args = { family_member: args.id }
+        }
     
     if (Array.isArray(args)) {
         args = {
@@ -624,7 +642,9 @@ destroy.url = (args: { family_member: string | number } | [family_member: string
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        family_member: args.family_member,
+                        family_member: typeof args.family_member === 'object'
+                ? args.family_member.id
+                : args.family_member,
                 }
 
     return destroy.definition.url
@@ -637,7 +657,7 @@ destroy.url = (args: { family_member: string | number } | [family_member: string
  * @see app/Http/Controllers/FamilyMemberController.php:232
  * @route '/family-members/{family_member}'
  */
-destroy.delete = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -647,7 +667,7 @@ destroy.delete = (args: { family_member: string | number } | [family_member: str
  * @see app/Http/Controllers/FamilyMemberController.php:232
  * @route '/family-members/{family_member}'
  */
-    const destroyForm = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    const destroyForm = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
         action: destroy.url(args, {
                     [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                         _method: 'DELETE',
@@ -662,7 +682,7 @@ destroy.delete = (args: { family_member: string | number } | [family_member: str
  * @see app/Http/Controllers/FamilyMemberController.php:232
  * @route '/family-members/{family_member}'
  */
-        destroyForm.delete = (args: { family_member: string | number } | [family_member: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        destroyForm.delete = (args: { family_member: number | { id: number } } | [family_member: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
             action: destroy.url(args, {
                         [options?.mergeQuery ? 'mergeQuery' : 'query']: {
                             _method: 'DELETE',

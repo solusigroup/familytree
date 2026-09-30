@@ -45,7 +45,7 @@ export default function Welcome() {
 
     return (
         <>
-            <Head title="Silsilah Keluarga Besar Dinasti Nasrukhan" />
+            <Head title="Silsilah Keluarga Besar Bani Ali Dahlan" />
 
             <div className="min-h-screen bg-slate-950 text-slate-100 selection:bg-amber-500 selection:text-slate-950 font-sans">
                 {/* Decorative background ambient glows */}
@@ -63,7 +63,7 @@ export default function Welcome() {
                                 <TreesIcon className="h-6 w-6 text-slate-950 font-bold" />
                             </div>
                             <div>
-                                <h1 className="text-lg font-extrabold tracking-wide text-white">DINASTI NASRUKHAN</h1>
+                                <h1 className="text-lg font-extrabold tracking-wide text-white">BANI ALI DAHLAN</h1>
                                 <p className="text-xs font-medium text-amber-400/80">Silsilah Keluarga Besar</p>
                             </div>
                         </div>
@@ -114,18 +114,18 @@ export default function Welcome() {
                         <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-1.5 backdrop-blur-md shadow-sm">
                             <Sparkles className="h-4 w-4 text-amber-400" />
                             <span className="text-xs font-semibold uppercase tracking-wider text-amber-300">
-                                Portal Silsilah Resmi Dinasti Nasrukhan
+                                Portal Silsilah Resmi Bani Ali Dahlan
                             </span>
                         </div>
                         <h1 className="mb-6 bg-gradient-to-r from-white via-slate-100 to-white/60 bg-clip-text text-5xl leading-tight font-black tracking-tight text-transparent sm:text-6xl md:text-7xl">
                             Keluarga Besar
                             <br />
                             <span className="bg-gradient-to-r from-amber-300 via-orange-400 to-amber-500 bg-clip-text text-transparent">
-                                DINASTI NASRUKHAN
+                                BANI ALI DAHLAN
                             </span>
                         </h1>
                         <p className="mx-auto mb-10 max-w-3xl text-lg leading-relaxed text-slate-400 sm:text-xl">
-                            Menghubungkan, mendokumentasikan, dan mengabadikan silsilah nasab Keluarga Besar Dinasti Nasrukhan dari generasi ke generasi dalam satu sistem digital yang terintegrasi.
+                            Menghubungkan, mendokumentasikan, dan mengabadikan silsilah nasab Keluarga Besar Bani Ali Dahlan dari generasi ke generasi dalam satu sistem digital yang terintegrasi.
                         </p>
 
                         <div className="flex flex-wrap items-center justify-center gap-4">
@@ -173,7 +173,7 @@ export default function Welcome() {
                     <div className="mx-auto max-w-7xl">
                         <div className="mb-14 text-center">
                             <h2 className="text-3xl font-extrabold text-white md:text-4xl">Fitur Utama Platform Digital</h2>
-                            <p className="mt-3 text-slate-400">Dirancang khusus untuk memfasilitasi pendataan silsilah Dinasti Nasrukhan secara terstruktur dan aman.</p>
+                            <p className="mt-3 text-slate-400">Dirancang khusus untuk memfasilitasi pendataan silsilah Bani Ali Dahlan secara terstruktur dan aman.</p>
                         </div>
                         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
                             <FeatureCard
@@ -208,13 +208,13 @@ export default function Welcome() {
                 <section className="relative z-10 px-6 py-16">
                     <div className="mx-auto max-w-5xl">
                         <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 via-white/[0.02] to-transparent p-10 backdrop-blur-md shadow-2xl">
-                            <h2 className="mb-6 text-3xl font-extrabold text-white">Tentang Dinasti Nasrukhan</h2>
+                            <h2 className="mb-6 text-3xl font-extrabold text-white">Tentang Bani Ali Dahlan</h2>
                             <div className="space-y-4 text-lg leading-relaxed text-slate-300">
                                 <p>
-                                    Keluarga Besar Dinasti Nasrukhan merupakan garis keturunan yang kokoh, berakar pada nilai-nilai persaudaraan, kehormatan, dan kebersamaan. Didirikan oleh "NASRUKHAN", nasab keluarga ini berkembang mengakar kuat hingga berbagai penjuru wilayah.
+                                    Keluarga besar Bani Ali Dahlan merupakan salah satu keluarga yang memiliki sejarah panjang dan kaya akan tradisi. Didirikan oleh Ali Dahlan, keluarga ini telah berkembang hingga beberapa generasi.
                                 </p>
                                 <p>
-                                    Aplikasi silsilah digital ini dibangun sebagai wadah silaturahmi modern agar generasi muda dan pendatang baru dalam keluarga senantiasa mengenali garis keturunan, hubungan kekerabatan, serta sejarah Dinasti Nasrukhan.
+                                    Aplikasi silsilah digital ini dibangun sebagai wadah silaturahmi modern agar generasi muda dan keluarga senantiasa mengenali garis keturunan, hubungan kekerabatan, serta melestarikan sejarah Bani Ali Dahlan.
                                 </p>
                             </div>
 
@@ -222,13 +222,13 @@ export default function Welcome() {
                                 <div className="rounded-2xl border border-amber-400/20 bg-amber-400/5 p-6 backdrop-blur-sm">
                                     <h3 className="mb-2 text-lg font-bold text-amber-400">Visi Utama</h3>
                                     <p className="text-sm leading-relaxed text-slate-300">
-                                        Menyatukan, mempererat, dan melestarikan tali silaturahmi seluruh Bani dan keturunan Dinasti Nasrukhan melalui platform silsilah terpadu.
+                                        Menyatukan, mempererat, dan melestarikan tali silaturahmi seluruh keluarga besar Bani Ali Dahlan melalui platform silsilah terpadu.
                                     </p>
                                 </div>
                                 <div className="rounded-2xl border border-emerald-400/20 bg-emerald-400/5 p-6 backdrop-blur-sm">
                                     <h3 className="mb-2 text-lg font-bold text-emerald-400">Misi Utama</h3>
                                     <p className="text-sm leading-relaxed text-slate-300">
-                                        Mendokumentasikan data biografi, foto, dan silsilah keluarga secara akurat, aman, dan dapat diakses dengan mudah oleh seluruh keluarga besar.
+                                        Mendokumentasikan data silsilah, biografi, dan foto keluarga secara lengkap, akurat, dan aman agar generasi mendatang dapat mengenal akar silsilah mereka.
                                     </p>
                                 </div>
                             </div>
@@ -243,10 +243,19 @@ export default function Welcome() {
                             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500 text-slate-950 font-bold">
                                 <TreesIcon className="h-5 w-5" />
                             </div>
-                            <span className="text-lg font-extrabold text-white">DINASTI NASRUKHAN</span>
+                            <span className="text-lg font-extrabold text-white">BANI ALI DAHLAN</span>
                         </div>
                         <p className="text-sm text-slate-500">
-                            &copy; {new Date().getFullYear()} Silsilah Digital dibuat oleh Kurniawan dengan Cinta. Seluruh hak cipta dilindungi.
+                            &copy; {new Date().getFullYear()} Silsilah Keluarga Bani Ali Dahlan. Dibuat dengan ❤️ oleh{' '}
+                            <a
+                                href="https://simpleakunting.biz.id/SolusiConsult.html"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-slate-400 hover:text-white hover:underline transition-colors"
+                            >
+                                Kurniawan
+                            </a>
+                            {' '}untuk keluarga besar.
                         </p>
                     </div>
                 </footer>

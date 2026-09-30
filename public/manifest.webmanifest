@@ -1,8 +1,8 @@
 {
   "id": "/?source=pwa",
-  "name": "Dinasti Nasrukhan - Silsilah Keluarga",
-  "short_name": "Nasrukhan",
-  "description": "Aplikasi Silsilah Keluarga Besar Bani Ali Dahlan (Dinasti Nasrukhan)",
+  "name": "Bani Ali Dahlan - Silsilah Keluarga",
+  "short_name": "Bani Dahlan",
+  "description": "Aplikasi Silsilah Keluarga Besar Bani Ali Dahlan",
   "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",

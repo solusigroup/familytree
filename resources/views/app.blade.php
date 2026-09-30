@@ -40,14 +40,14 @@
         {{-- iOS / Apple Safari Meta Tags --}}
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-        <meta name="apple-mobile-web-app-title" content="{{ config('app.name', 'Dinasti Nasrukhan') }}">
+        <meta name="apple-mobile-web-app-title" content="{{ config('app.name', 'Bani Ali Dahlan') }}">
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
         <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180x180.png">
         <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png">
 
         {{-- Chrome / Android / General Web App Meta Tags --}}
         <meta name="mobile-web-app-capable" content="yes">
-        <meta name="application-name" content="{{ config('app.name', 'Dinasti Nasrukhan') }}">
+        <meta name="application-name" content="{{ config('app.name', 'Bani Ali Dahlan') }}">
 
         <link rel="icon" href="/favicon.ico" sizes="any">
         <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">

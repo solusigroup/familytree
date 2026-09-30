@@ -2,7 +2,7 @@
 
 # ==============================================================================
 # Deployment Script untuk Shared Hosting (Tanpa Node.js / NPM)
-# Project: Dinasti Nasrukhan / Family Tree
+# Project: Bani Ali Dahlan / Family Tree
 # ==============================================================================
 # Skenario:
 # - Server shared hosting TIDAK memiliki Node.js / NPM.
