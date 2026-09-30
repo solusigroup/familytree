@@ -81,6 +81,30 @@ export default function Gallery() {
                                         className="absolute inset-0 z-10"
                                     >
                                         <span className="sr-only">Lihat detail {member.name}</span>
+
+                                        {/* Inset Spouse Photo (Bottom-Left 25%) */}
+                                        {member.spouses && member.spouses.filter((s) => s.photo).length > 0 && (
+                                            <div className="absolute bottom-0 left-0 flex w-full items-end">
+                                                {member.spouses
+                                                    .filter((s) => s.photo)
+                                                    .map((spouse) => (
+                                                        <div
+                                                            key={spouse.id}
+                                                            title={`Pasangan: ${spouse.name}`}
+                                                            className="relative aspect-square w-1/4 overflow-hidden rounded-tr-2xl border-t-2 border-r-2 border-card bg-muted shadow-md origin-bottom-left transition-transform duration-500 group-hover:scale-105"
+                                                        >
+                                                            <img
+                                                                src={`/storage/${spouse.photo}`}
+                                                                alt={spouse.name}
+                                                                className="h-full w-full object-cover"
+                                                                onError={(e) => {
+                                                                    (e.target as HTMLImageElement).parentElement?.classList.add('hidden');
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    ))}
+                                            </div>
+                                        )}
                                     </Link>
                                 </div>
 
@@ -104,10 +128,12 @@ export default function Gallery() {
                                     <div className="mt-auto border-t border-sidebar-border/50 pt-3">
                                         <p className="mb-2 text-xs font-medium text-muted-foreground">Pasangan:</p>
                                         {member.spouses && member.spouses.length > 0 ? (
-                                            <div className="flex flex-col gap-2">
+                                            <div className="flex flex-col gap-2.5">
                                                 {member.spouses.map((spouse) => (
-                                                    <div key={spouse.id} className="flex items-center gap-2">
-                                                        <div className="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted/50 text-xs font-bold text-white">
+                                                    <div key={spouse.id} className="flex items-center gap-3">
+                                                        <div className={`relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full text-xs font-bold text-white shadow-xs ${
+                                                            spouse.photo ? 'bg-muted/50' : (spouse.gender === 'male' ? 'bg-gradient-to-br from-sky-400 to-blue-500' : 'bg-gradient-to-br from-pink-400 to-rose-500')
+                                                        }`}>
                                                             {spouse.photo ? (
                                                                 <img
                                                                     src={`/storage/${spouse.photo}`}
@@ -119,11 +145,11 @@ export default function Gallery() {
                                                                     }}
                                                                 />
                                                             ) : null}
-                                                            <div className={`absolute inset-0 flex items-center justify-center ${spouse.photo ? 'hidden' : ''} bg-sidebar-border/50`}>
+                                                            <div className={`absolute inset-0 flex items-center justify-center ${spouse.photo ? 'hidden' : ''}`}>
                                                                 {spouse.name.charAt(0)}
                                                             </div>
                                                         </div>
-                                                        <span className="text-xs text-foreground line-clamp-1">
+                                                        <span className="text-sm sm:text-base font-semibold text-foreground line-clamp-1">
                                                             {spouse.name}
                                                         </span>
                                                     </div>
