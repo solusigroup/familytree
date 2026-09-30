@@ -44,16 +44,16 @@ detect_php() {
         return
     fi
 
-    # Daftar path PHP 8.3+ yang umum di cPanel / Shared Hosting
+    # Daftar path PHP yang umum di cPanel / Shared Hosting (prioritaskan 8.4 lalu 8.3)
     local CANDIDATES=(
-        "/usr/local/bin/ea-php83"
         "/usr/local/bin/ea-php84"
-        "/opt/cpanel/ea-php83/root/usr/bin/php"
         "/opt/cpanel/ea-php84/root/usr/bin/php"
-        "/opt/alt/php83/usr/bin/php"
         "/opt/alt/php84/usr/bin/php"
-        "/usr/bin/php8.3"
         "/usr/bin/php8.4"
+        "/usr/local/bin/ea-php83"
+        "/opt/cpanel/ea-php83/root/usr/bin/php"
+        "/opt/alt/php83/usr/bin/php"
+        "/usr/bin/php8.3"
         "/usr/local/php83/bin/php"
         "/usr/local/lsws/lsphp83/bin/lsphp"
         "php"
@@ -116,7 +116,7 @@ fi
 echo -e "\n${YELLOW}📦 Memeriksa Composer dependencies...${NC}"
 if command -v composer >/dev/null 2>&1; then
     echo -e "${GREEN}✓ Menjalankan composer install...${NC}"
-    composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
+    $PHP_CMD $(command -v composer) install --no-dev --prefer-dist --optimize-autoloader --no-interaction
 elif [ -f "composer.phar" ]; then
     echo -e "${GREEN}✓ Menjalankan composer.phar install...${NC}"
     $PHP_CMD composer.phar install --no-dev --prefer-dist --optimize-autoloader --no-interaction

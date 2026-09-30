@@ -181,6 +181,16 @@ class Request
 
     private static int $trustedHeaderSet = -1;
 
+    /**
+     * @var array<string, true>
+     */
+    private static array $trustedHostsLiterals = [];
+
+    /**
+     * @var string[]
+     */
+    private static array $trustedHostsRegexps = [];
+
     private const FORWARDED_PARAMS = [
         self::HEADER_X_FORWARDED_FOR => 'for',
         self::HEADER_X_FORWARDED_HOST => 'host',
@@ -287,6 +297,18 @@ class Request
     {
         if (!\in_array($_SERVER['REQUEST_METHOD'] ?? null, ['PUT', 'DELETE', 'PATCH', 'QUERY'], true)) {
             return self::createRequestFromFactory($_GET, $_POST, [], $_COOKIE, $_FILES, $_SERVER);
+        }
+
+        if (\PHP_VERSION_ID < 80400) {
+            if (!isset($_SERVER['CONTENT_TYPE']) || str_starts_with($_SERVER['CONTENT_TYPE'], 'application/x-www-form-urlencoded')) {
+                $content = file_get_contents('php://input');
+                parse_str($content, $post);
+            } else {
+                $content = null;
+                $post = $_POST;
+            }
+
+            return self::createRequestFromFactory($_GET, $post, [], $_COOKIE, $_FILES, $_SERVER, $content);
         }
 
         try {
@@ -641,9 +663,20 @@ class Request
      */
     public static function setTrustedHosts(array $hostPatterns): void
     {
-        self::$trustedHostPatterns = array_map(fn ($hostPattern) => \sprintf('{%s}i', $hostPattern), $hostPatterns);
-        // we need to reset trusted hosts on trusted host patterns change
-        self::$trustedHosts = [];
+        self::$trustedHostPatterns = array_map(static fn ($hostPattern) => \sprintf('{%s}i', $hostPattern), $hostPatterns);
+        self::$trustedHostsLiterals = [];
+        $regexpPatterns = [];
+
+        foreach ($hostPatterns as $hostPattern) {
+            // constant patterns are matched by a hash lookup in getHost(), where the host is lowercase and free of newlines
+            if (preg_match('{^\^((?:[a-z0-9_:-]|\\\\[^a-z0-9])++)\$$}Di', $hostPattern, $m)) {
+                self::$trustedHostsLiterals[strtolower(preg_replace('{\\\\(.)}s', '$1', $m[1]))] = true;
+            } else {
+                $regexpPatterns[] = $hostPattern;
+            }
+        }
+
+        self::$trustedHostsRegexps = self::compileHostPatterns($regexpPatterns);
     }
 
     /**
@@ -724,6 +757,36 @@ class Request
     public static function getAllowedHttpMethodOverride(): ?array
     {
         return self::$allowedHttpMethodOverride;
+    }
+
+    /**
+     * Gets a "parameter" value from any bag.
+     *
+     * This method is mainly useful for libraries that want to provide some flexibility. If you don't need the
+     * flexibility in controllers, it is better to explicitly get request parameters from the appropriate
+     * public property instead (attributes, query, request).
+     *
+     * Order of precedence: PATH (routing placeholders or custom attributes), GET, POST
+     *
+     * @deprecated since Symfony 7.4, use properties `->attributes`, `query` or `request` directly instead
+     */
+    public function get(string $key, mixed $default = null): mixed
+    {
+        trigger_deprecation('symfony/http-foundation', '7.4', 'Request::get() is deprecated, use properties ->attributes, query or request directly instead.');
+
+        if ($this !== $result = $this->attributes->get($key, $this)) {
+            return $result;
+        }
+
+        if ($this->query->has($key)) {
+            return $this->query->all()[$key];
+        }
+
+        if ($this->request->has($key)) {
+            return $this->request->all()[$key];
+        }
+
+        return $default;
     }
 
     /**
@@ -814,10 +877,6 @@ class Request
      * header value is a comma+space separated list of IP addresses, the left-most
      * being the original client, and each successive proxy that passed the request
      * adding the IP address where it received the request from.
-     *
-     * If your reverse proxy uses a different header name than "X-Forwarded-For",
-     * ("Client-Ip" for instance), configure it via the $trustedHeaderSet
-     * argument of the Request::setTrustedProxies() method instead.
      *
      * @see getClientIps()
      * @see https://wikipedia.org/wiki/X-Forwarded-For
@@ -1155,17 +1214,15 @@ class Request
             throw new SuspiciousOperationException(\sprintf('Invalid Host "%s".', $host));
         }
 
-        if (\count(self::$trustedHostPatterns) > 0) {
+        if (self::$trustedHostsLiterals || self::$trustedHostsRegexps) {
             // to avoid host header injection attacks, you should provide a list of trusted host patterns
 
-            if (\in_array($host, self::$trustedHosts, true)) {
+            if (isset(self::$trustedHostsLiterals[$host])) {
                 return $host;
             }
 
-            foreach (self::$trustedHostPatterns as $pattern) {
-                if (preg_match($pattern, $host)) {
-                    self::$trustedHosts[] = $host;
-
+            foreach (self::$trustedHostsRegexps as $regexp) {
+                if (preg_match($regexp, $host)) {
                     return $host;
                 }
             }
@@ -1228,7 +1285,7 @@ class Request
         $method = strtoupper($method);
 
         if (\in_array($method, ['GET', 'HEAD', 'CONNECT', 'TRACE'], true)) {
-            return $this->method;
+            trigger_deprecation('symfony/http-foundation', '7.4', 'HTTP method override is deprecated for methods GET, HEAD, CONNECT and TRACE; it will be ignored in Symfony 8.0.', $method);
         }
 
         if (self::$allowedHttpMethodOverride && !\in_array($method, self::$allowedHttpMethodOverride, true)) {
@@ -1293,8 +1350,9 @@ class Request
      * @param string|null $mimeType        The mime type to check
      * @param bool        $subtypeFallback Whether to fall back to the subtype if no exact match is found
      */
-    public function getFormat(?string $mimeType, bool $subtypeFallback = false): ?string
+    public function getFormat(?string $mimeType/* , bool $subtypeFallback = false */): ?string
     {
+        $subtypeFallback = 2 <= \func_num_args() ? func_get_arg(1) : false;
         $canonicalMimeType = null;
         if ($mimeType && false !== $pos = strpos($mimeType, ';')) {
             $canonicalMimeType = trim(substr($mimeType, 0, $pos));
@@ -1347,10 +1405,16 @@ class Request
     /**
      * Associates a format with mime types.
      *
+     * @param string          $format    The format to set
      * @param string|string[] $mimeTypes The associated mime types (the preferred one must be the first as it will be used as the content type)
      */
-    public function setFormat(string $format, string|array $mimeTypes): void
+    public function setFormat(?string $format, string|array $mimeTypes): void
     {
+        if (null === $format) {
+            trigger_deprecation('symfony/http-foundation', '7.4', 'Passing "null" as the first argument of "%s()" is deprecated. The argument will be non-nullable in Symfony 8.0.', __METHOD__);
+            $format = '';
+        }
+
         if (null === static::$formats) {
             static::initializeFormats();
         }
@@ -2156,17 +2220,15 @@ class Request
         $firstTrustedIp = null;
 
         foreach ($clientIps as $key => $clientIp) {
-            if (strpos($clientIp, '.')) {
-                // Strip :port from IPv4 addresses. This is allowed in Forwarded
-                // and may occur in X-Forwarded-For.
-                $i = strpos($clientIp, ':');
-                if ($i) {
-                    $clientIps[$key] = $clientIp = substr($clientIp, 0, $i);
-                }
-            } elseif (str_starts_with($clientIp, '[')) {
+            if (str_starts_with($clientIp, '[')) {
                 // Strip brackets and :port from IPv6 addresses.
                 $i = strpos($clientIp, ']', 1);
                 $clientIps[$key] = $clientIp = substr($clientIp, 1, $i - 1);
+            } elseif (strpos($clientIp, '.') && 1 === substr_count($clientIp, ':')) {
+                // Strip :port from IPv4 addresses. This is allowed in Forwarded
+                // and may occur in X-Forwarded-For. An IPv6 address with an
+                // embedded IPv4 address has at least two colons and is kept.
+                $clientIps[$key] = $clientIp = strstr($clientIp, ':', true);
             }
 
             if (!filter_var($clientIp, \FILTER_VALIDATE_IP)) {
@@ -2218,5 +2280,32 @@ class Request
 
         // use preg_replace() instead of preg_match() to prevent DoS attacks with long host names
         return '' === preg_replace('/[-a-zA-Z0-9_]++\.?/', '', $host);
+    }
+
+    /**
+     * Combines host patterns into as few regexps as PCRE can compile.
+     *
+     * @return string[]
+     */
+    private static function compileHostPatterns(array $hostPatterns): array
+    {
+        if (!$hostPatterns) {
+            return [];
+        }
+
+        // the branch reset group keeps capturing groups, back references and inline modifiers local to each pattern
+        $regexp = \sprintf('{(?|(?:%s))}i', implode(')|(?:', $hostPatterns));
+
+        if (1 === \count($hostPatterns) || false !== @preg_match($regexp, '')) {
+            return [$regexp];
+        }
+
+        // the combined pattern exceeds the maximum size PCRE accepts, split it in half
+        $half = intdiv(\count($hostPatterns), 2);
+
+        return array_merge(
+            self::compileHostPatterns(\array_slice($hostPatterns, 0, $half)),
+            self::compileHostPatterns(\array_slice($hostPatterns, $half))
+        );
     }
 }

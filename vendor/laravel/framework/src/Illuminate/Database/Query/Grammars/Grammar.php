@@ -139,7 +139,7 @@ class Grammar extends BaseGrammar
             $column = 'distinct '.$column;
         }
 
-        return 'select '.$aggregate['function'].'('.$column.') as aggregate';
+        return 'select '.$aggregate['function'].'('.$column.') as '.$this->wrap('aggregate');
     }
 
     /**
@@ -309,6 +309,20 @@ class Grammar extends BaseGrammar
         $operator = str_replace('?', '??', $where['operator']);
 
         return $this->wrap($where['column']).' '.$operator.' '.$value;
+    }
+
+    /**
+     * Compile a "where binary" clause.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @param  array  $where
+     * @return string
+     *
+     * @throws \RuntimeException
+     */
+    protected function whereBinary(Builder $query, $where)
+    {
+        throw new RuntimeException('This database engine does not support binary comparison operations.');
     }
 
     /**
@@ -585,7 +599,9 @@ class Grammar extends BaseGrammar
      */
     protected function whereColumn(Builder $query, $where)
     {
-        return $this->wrap($where['first']).' '.$where['operator'].' '.$this->wrap($where['second']);
+        $operator = str_replace('?', '??', $where['operator']);
+
+        return $this->wrap($where['first']).' '.$operator.' '.$this->wrap($where['second']);
     }
 
     /**
@@ -845,6 +861,29 @@ class Grammar extends BaseGrammar
     public function whereExpression(Builder $query, $where)
     {
         return $where['column']->getValue($this);
+    }
+
+    /**
+     * Compile a vector distance expression for the given column.
+     *
+     * @param  string  $column
+     * @return string
+     *
+     * @throws \RuntimeException
+     */
+    public function compileVectorDistanceExpression($column)
+    {
+        throw new RuntimeException('This database engine does not support vector distance queries.');
+    }
+
+    /**
+     * Determine if the grammar supports vector distance queries.
+     *
+     * @return bool
+     */
+    public function supportsVectorDistance()
+    {
+        return false;
     }
 
     /**
@@ -1621,6 +1660,7 @@ class Grammar extends BaseGrammar
         $bindings = array_map(fn ($value) => $this->escape($value, is_resource($value) || gettype($value) === 'resource (closed)'), $bindings);
 
         $query = '';
+        $bindingIndex = 0;
 
         $isStringLiteral = false;
 
@@ -1638,7 +1678,7 @@ class Grammar extends BaseGrammar
                 $query .= $char;
                 $isStringLiteral = ! $isStringLiteral;
             } elseif ($char === '?' && ! $isStringLiteral) { // Substitutable binding...
-                $query .= array_shift($bindings) ?? '?';
+                $query .= $bindings[$bindingIndex++] ?? '?';
             } else { // Normal character...
                 $query .= $char;
             }

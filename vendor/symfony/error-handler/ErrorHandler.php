@@ -145,6 +145,11 @@ class ErrorHandler
                 $prev[0]->setExceptionHandler($p);
             }
         } else {
+            if (!$handlerIsRegistered && null === $prev) {
+                // another error handler is in charge and there is no exception handler to decorate
+                restore_exception_handler();
+            }
+
             $handler->setExceptionHandler($prev ?? [$handler, 'renderException']);
         }
 
@@ -181,6 +186,11 @@ class ErrorHandler
         ?BufferingLogger $bootstrappingLogger = null,
         private bool $debug = false,
     ) {
+        if (\PHP_VERSION_ID < 80400) {
+            $this->levels[\E_STRICT] = 'Runtime Notice';
+            $this->loggers[\E_STRICT] = [null, LogLevel::ERROR];
+        }
+
         if ($bootstrappingLogger) {
             $this->bootstrappingLogger = $bootstrappingLogger;
             $this->setDefaultLogger($bootstrappingLogger);
@@ -430,6 +440,22 @@ class ErrorHandler
                 return true;
             }
         } else {
+            if (\PHP_VERSION_ID < 80303 && str_contains($message, '@anonymous')) {
+                $backtrace = debug_backtrace(false, 5);
+
+                for ($i = 1; isset($backtrace[$i]); ++$i) {
+                    if (isset($backtrace[$i]['function'], $backtrace[$i]['args'][0])
+                        && ('trigger_error' === $backtrace[$i]['function'] || 'user_error' === $backtrace[$i]['function'])
+                    ) {
+                        if ($backtrace[$i]['args'][0] !== $message) {
+                            $message = $backtrace[$i]['args'][0];
+                        }
+
+                        break;
+                    }
+                }
+            }
+
             if (str_contains($message, "@anonymous\0")) {
                 $message = $this->parseAnonymousClass($message);
                 $logMessage = $this->levels[$type].': '.$message;
@@ -473,6 +499,7 @@ class ErrorHandler
     public function handleException(\Throwable $exception): void
     {
         $handlerException = null;
+        $loggerFailed = false;
 
         if (!$exception instanceof FatalError) {
             self::$exitCode = 255;
@@ -500,6 +527,7 @@ class ErrorHandler
             try {
                 $this->loggers[$type][0]->log($this->loggers[$type][1], $message, ['exception' => $exception]);
             } catch (\Throwable $handlerException) {
+                $loggerFailed = true;
             }
         }
 
@@ -527,7 +555,8 @@ class ErrorHandler
         }
 
         $loggedErrors = $this->loggedErrors;
-        if ($exception === $handlerException) {
+        if ($exception === $handlerException || $loggerFailed) {
+            // the logger for that type is what threw, so calling it again would recurse forever
             $this->loggedErrors &= ~$type;
         }
 
@@ -578,7 +607,7 @@ class ErrorHandler
         }
         if (!$handler) {
             if (null === $error && $exitCode = self::$exitCode) {
-                register_shutdown_function('register_shutdown_function', function () use ($exitCode) { exit($exitCode); });
+                register_shutdown_function('register_shutdown_function', static function () use ($exitCode) { exit($exitCode); });
             }
 
             return;
@@ -596,7 +625,8 @@ class ErrorHandler
         if ($error && $error['type'] &= \E_PARSE | \E_ERROR | \E_CORE_ERROR | \E_COMPILE_ERROR) {
             // Let's not throw anymore but keep logging
             $handler->throwAt(0, true);
-            $trace = $error['backtrace'] ?? null;
+            // "trace" is set by PHP >= 8.5 when fatal_error_backtraces is enabled
+            $trace = $error['trace'] ?? null;
 
             if (str_starts_with($error['message'], 'Allowed memory') || str_starts_with($error['message'], 'Out of memory')) {
                 $fatalError = new OutOfMemoryError($handler->levels[$error['type']].': '.$error['message'], 0, $error, 2, false, $trace);
@@ -617,7 +647,7 @@ class ErrorHandler
         }
 
         if ($exit && $exitCode = self::$exitCode) {
-            register_shutdown_function('register_shutdown_function', function () use ($exitCode) { exit($exitCode); });
+            register_shutdown_function('register_shutdown_function', static function () use ($exitCode) { exit($exitCode); });
         }
     }
 
