@@ -102,6 +102,9 @@ git pull origin "$BRANCH"
 
 # 5. Verifikasi Aset Frontend (karena shared hosting tidak ada Node.js)
 echo -e "\n${YELLOW}🔍 Memeriksa aset frontend Vite (public/build)...${NC}"
+# Pastikan file public/hot terhapus agar Laravel membaca manifest production
+rm -f public/hot
+
 if [ -f "public/build/manifest.json" ]; then
     echo -e "${GREEN}✓ public/build/manifest.json ditemukan.${NC} (Aset ter-compile sudah ada)"
 else
